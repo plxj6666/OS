@@ -12,7 +12,7 @@ CFLAGS		= -I ../include/ -c -fno-builtin -fno-stack-protector -Wall
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd
+BIN		= echo pwd ikun touch rm
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -51,4 +51,22 @@ pwd.o: pwd.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 pwd : pwd.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+ikun.o: ikun.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+ikun : ikun.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+touch.o: touch.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+touch : touch.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+rm.o: rm.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+rm : rm.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
