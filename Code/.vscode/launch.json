@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "qemu kernel debug",
+            "type": "lldb",
+            "request": "custom",
+            "breakpointMode": "file",
+            "initCommands": [
+                "settings set target.x86-disassembly-flavor intel",
+                "command script import ~/lldb/disass.py"
+            ],
+            "targetCreateCommands": [
+                "target create ${workspaceFolder}/kernel.bin"
+            ],
+            "processCreateCommands": [
+                "gdb-remote localhost:1234"
+            ],
+            "preLaunchTask": "launch qemu"
+        }
+    ]
+}

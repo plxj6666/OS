@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "launch qemu",
+            "type": "shell",
+            "isBackground": true,
+            "command": "qemu-system-i386 -drive format=raw,file=a.img,if=floppy,id=b1 -drive format=raw,file=80m.img,if=ide,index=0,media=disk -boot a -s -S",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(QEMU)",
+                    "line": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^(QEMU)",
+                    "endsPattern": "^(QEMU)"
+                }
+            }
+        }
+    ]
+}
