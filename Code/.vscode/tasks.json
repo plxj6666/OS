@@ -2,6 +2,20 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "prepare debug",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "extract debug symbols",
+                "launch qemu"
+            ]
+        },
+        {
+            "label": "extract debug symbols",
+            "type": "shell",
+            "command": "x86_64-elf-objcopy --only-keep-debug kernel.bin kernel.debug && x86_64-elf-objcopy --strip-debug kernel.bin",
+            "problemMatcher": []
+        },
+        {
             "label": "launch qemu",
             "type": "shell",
             "isBackground": true,

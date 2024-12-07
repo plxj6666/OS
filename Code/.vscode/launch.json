@@ -2,21 +2,33 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "qemu kernel debug",
-            "type": "lldb",
-            "request": "custom",
-            "breakpointMode": "file",
-            "initCommands": [
-                "settings set target.x86-disassembly-flavor intel",
-                "command script import ~/lldb/disass.py"
+            "name": "Kernel Debug (GDB)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/kernel.bin",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/local/bin/x86_64-elf-gdb",
+            "miDebuggerServerAddress": "localhost:1234",
+            "targetArchitecture": "x86",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "设置反汇编风格为 Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
             ],
-            "targetCreateCommands": [
-                "target create ${workspaceFolder}/kernel.bin"
-            ],
-            "processCreateCommands": [
-                "gdb-remote localhost:1234"
-            ],
-            "preLaunchTask": "launch qemu"
+            "preLaunchTask": "launch qemu",
+            "serverStarted": "QEMU waiting for connection"
         }
     ]
 }
