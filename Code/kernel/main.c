@@ -1,4 +1,3 @@
-
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                             main.c
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -39,6 +38,19 @@ PUBLIC int kernel_main()
 
 	char * stk = task_stack + STACK_SIZE_TOTAL;
 
+	/* 在其他初始化之前 */
+	// 因为c对于未定义的变量会自动初始化为0，导致错误的进入分支
+	k_reenter = 1;  /* 确保在系统初始化阶段不会触发系统调用 */
+	log_categories = LOG_CAT_DEFAULT;  /* 使用默认日志类别配置 */
+	/* 初始化日志系统 */
+	log_level = LOG_LEVEL_INFO;
+
+	disp_str("Log system initialized: level=");
+	disp_int(log_level);
+	disp_str(" categories=");
+	disp_int(log_categories);
+	disp_str("\n");
+
 	for (i = 0; i < NR_TASKS + NR_PROCS; i++,p++,t++) {
 		if (i >= NR_TASKS + NR_NATIVE_PROCS) {
 			p->p_flags = FREE_SLOT;
@@ -51,6 +63,15 @@ PUBLIC int kernel_main()
                         rpl     = RPL_TASK;
                         eflags  = 0x1202;/* IF=1, IOPL=1, bit 2 is always 1 */
 			prio    = 15;
+
+			/* 直接使用底层显示函数记录任务初始化 */
+			disp_str("[TASK] ");
+			disp_str(t->name);
+			disp_str(" (PID:");
+			disp_int(i);
+			disp_str(" Priority:");
+			disp_int(prio);
+			disp_str(")\n");
                 }
                 else {                  /* USER PROC */
                         t	= user_proc_table + (i - NR_TASKS);
@@ -58,6 +79,15 @@ PUBLIC int kernel_main()
                         rpl     = RPL_USER;
                         eflags  = 0x202;	/* IF=1, bit 2 is always 1 */
 			prio    = 5;
+
+			/* 直接使用底层显示函数记录用户进程初始化 */
+			disp_str("[USER] ");
+			disp_str(t->name);
+			disp_str(" (PID:");
+			disp_int(i);
+			disp_str(" Priority:");
+			disp_int(prio);
+			disp_str(")\n");
                 }
 
 		strcpy(p->name, t->name);	/* name of the process */
@@ -119,13 +149,14 @@ PUBLIC int kernel_main()
 		stk -= t->stacksize;
 	}
 
+	/* 在所有进程初始化完成后，再重置 k_reenter */
 	k_reenter = 0;
 	ticks = 0;
 
 	p_proc_ready	= proc_table;
 
 	init_clock();
-        init_keyboard();
+    init_keyboard();
 
 	restart();
 
@@ -311,7 +342,7 @@ void Init()
 	/* extract `cmd.tar' */
 	untar("/cmd.tar");
 			
-
+	printf("untar done\n");
 	char * tty_list[] = {"/dev_tty1", "/dev_tty2"};
 
 	int i;

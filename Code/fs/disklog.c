@@ -73,9 +73,17 @@ PUBLIC int disklog(char * logstr)
 {
 	int device = root_inode->i_dev;
 	struct super_block * sb = get_super_block(device);
-	int nr_log_blk0_nr = sb->nr_sects - NR_SECTS_FOR_LOG; /* 0x9D41-0x800=0x9541 */
+	int nr_log_blk0_nr = sb->nr_sects - NR_SECTS_FOR_LOG;
 
+	char debug_buf[256];
+	sprintf(debug_buf, "Disklog: writing to sector %d\n", nr_log_blk0_nr);
+	printl(debug_buf);
+	
 	static int pos = 0;
+	if (!pos) {
+		printl("Disklog: initializing log area\n");
+	}
+
 	if (!pos) { /* first time invoking this routine */
 
 #ifdef SET_LOG_SECT_SMAP_AT_STARTUP

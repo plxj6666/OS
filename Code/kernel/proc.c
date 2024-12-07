@@ -330,6 +330,7 @@ PRIVATE int msg_send(struct proc* current, int dest, MESSAGE* m)
  *****************************************************************************/
 PRIVATE int msg_receive(struct proc* current, int src, MESSAGE* m)
 {
+	disable_int();
 	struct proc* p_who_wanna_recv = current; /**
 						  * This name is a little bit
 						  * wierd, but it makes me
@@ -365,6 +366,7 @@ PRIVATE int msg_receive(struct proc* current, int src, MESSAGE* m)
 		assert(p_who_wanna_recv->p_sendto == NO_TASK);
 		assert(p_who_wanna_recv->has_int_msg == 0);
 
+		enable_int();
 		return 0;
 	}
 
@@ -477,6 +479,8 @@ PRIVATE int msg_receive(struct proc* current, int src, MESSAGE* m)
 		assert(p_who_wanna_recv->p_sendto == NO_TASK);
 		assert(p_who_wanna_recv->has_int_msg == 0);
 	}
+
+	enable_int();
 
 	return 0;
 }

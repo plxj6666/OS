@@ -144,7 +144,8 @@ PUBLIC int	execv		(const char * path, char * argv[]);
 PUBLIC int	stat		(const char *path, struct stat *buf);
 
 /* lib/syslog.c */
-PUBLIC	int	syslog		(const char *fmt, ...);
+// we have updated syslog to accept level and category, this version is no longer needed
+// PUBLIC	int	syslog		(const char *fmt, ...);
 
 
 #endif /* _ORANGES_STDIO_H_ */
