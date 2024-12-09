@@ -34,7 +34,6 @@ PUBLIC void schedule()
 {
 	struct proc*	p;
 	int		greatest_ticks = 0;
-
 	while (!greatest_ticks) {
 		for (p = &FIRST_PROC; p <= &LAST_PROC; p++) {
 			if (p->p_flags == 0) {

@@ -38,12 +38,14 @@ PUBLIC int kernel_main()
 
 	char * stk = task_stack + STACK_SIZE_TOTAL;
 
+	system_ready = 0; // 系统没有完成初始化
 	/* 在其他初始化之前 */
-	// 因为c对于未定义的变量会自动初始化为0，导致错误的进入分支
 	k_reenter = 1;  /* 确保在系统初始化阶段不会触发系统调用 */
+
 	log_categories = LOG_CAT_DEFAULT;  /* 使用默认日志类别配置 */
 	/* 初始化日志系统 */
-	log_level = LOG_LEVEL_INFO;
+	log_level = LOG_LEVEL_DEBUG;
+	
 	for (i = 0; i < NR_TASKS + NR_PROCS; i++,p++,t++) {
 		if (i >= NR_TASKS + NR_NATIVE_PROCS) {
 			p->p_flags = FREE_SLOT;
@@ -313,7 +315,6 @@ void Init()
 	assert(fd_stdout == 1);
 
 	printf("Init() is running ...\n");
-
 	/* extract `cmd.tar' */
 	// untar("/cmd.tar");
 			

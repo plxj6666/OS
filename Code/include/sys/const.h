@@ -137,7 +137,8 @@
 #define TASK_FS		3
 #define TASK_MM		4
 #define TASK_LOG		5
-#define INIT		6
+#define TASK_FLUSH  6  // 新增日志刷新任务
+#define INIT		7  // INIT的序号往后移
 #define ANY		(NR_TASKS + NR_PROCS + 10)
 #define NO_TASK		(NR_TASKS + NR_PROCS + 20)
 

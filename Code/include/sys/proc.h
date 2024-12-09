@@ -79,7 +79,7 @@ struct task {
 #define proc2pid(x) (x - proc_table)
 
 /* Number of tasks & processes */
-#define NR_TASKS		6
+#define NR_TASKS		7
 #define NR_PROCS		32
 #define NR_NATIVE_PROCS		4
 #define FIRST_PROC		proc_table[0]
@@ -109,6 +109,7 @@ struct task {
 #define STACK_SIZE_TESTB	STACK_SIZE_DEFAULT
 #define STACK_SIZE_TESTC	STACK_SIZE_DEFAULT
 #define STACK_SIZE_LOG		STACK_SIZE_DEFAULT
+#define STACK_SIZE_SWITCH_LOG	STACK_SIZE_DEFAULT
 
 #define STACK_SIZE_TOTAL	(STACK_SIZE_TTY + \
 				STACK_SIZE_SYS + \
@@ -119,5 +120,19 @@ struct task {
 				STACK_SIZE_INIT + \
 				STACK_SIZE_TESTA + \
 				STACK_SIZE_TESTB + \
-				STACK_SIZE_TESTC)
+				STACK_SIZE_TESTC + \
+				STACK_SIZE_SWITCH_LOG)
+
+// 进程切换日志 ，最多记录128条
+#define MAX_SWITCH_LOGS 128
+
+struct proc_switch_log {
+    char from_name[16];
+    int from_pid;
+    char to_name[16];
+    int to_pid;
+};
+
+EXTERN struct proc_switch_log switch_logs[MAX_SWITCH_LOGS];
+EXTERN int switch_log_index;
 

@@ -19,7 +19,6 @@
 #include "global.h"
 #include "proto.h"
 
-
 /*****************************************************************************
  *                                clock_handler
  *****************************************************************************/
@@ -43,13 +42,24 @@ PUBLIC void clock_handler(int irq)
 	if (k_reenter != 0) {
 		return;
 	}
-
+	// 如果当前进程的ticks大于0，则不进行进程切换，这样导致进程调度就是按照ticks大小顺序执行
 	if (p_proc_ready->ticks > 0) {
 		return;
 	}
 
+	struct proc* p_proc_current = p_proc_ready;
 	schedule();
-
+	
+	if (system_ready) {
+		// 直接写入环形缓冲区，不采用进程通信，因为我们在内核态
+		struct proc_switch_log* log = &switch_logs[switch_log_index];
+		strcpy(log->from_name, p_proc_current->name);
+		log->from_pid = proc2pid(p_proc_current);
+		strcpy(log->to_name, p_proc_ready->name);
+		log->to_pid = proc2pid(p_proc_ready);
+		
+		switch_log_index = (switch_log_index + 1) % MAX_SWITCH_LOGS;
+	}
 }
 
 /*****************************************************************************

@@ -40,7 +40,7 @@ PUBLIC void task_fs()
 	printl("{FS} Task FS begins.\n");
 
 	init_fs();
-
+	system_ready = 1;
 	while (1) {
 		send_recv(RECEIVE, ANY, &fs_msg);
 

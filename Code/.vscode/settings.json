@@ -4,4 +4,8 @@
     "lldb.dereferencePointers": true,
     "lldb.consoleMode": "commands",
     "lldb.commandCompletions": true,
+    "files.associations": {
+        "log.h": "c",
+        "proto.h": "c"
+    },
 } 
