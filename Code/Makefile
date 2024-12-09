@@ -17,7 +17,7 @@ CC		= gcc
 LD		= ld
 ASMBFLAGS	= -I boot/include/
 ASMKFLAGS	= -I include/ -I include/sys/ -f elf
-CFLAGS		= -I include/ -I include/sys/ -c -fno-builtin -fno-stack-protector -fpack-struct -Wall  -g1
+CFLAGS		= -I include/ -I include/sys/ -c -fno-builtin -fno-stack-protector -fpack-struct -Wall -g
 LDFLAGS		= -Ttext $(ENTRYPOINT) -Map krnl.map
 DASMFLAGS	= -D
 ARFLAGS		= rcs
@@ -83,6 +83,9 @@ boot/loader.bin : boot/loader.asm boot/include/load.inc boot/include/fat12hdr.in
 
 $(ORANGESKERNEL) : $(OBJS) $(LIB)
 	$(LD) $(LDFLAGS) -o $(ORANGESKERNEL) $^
+	cp $(ORANGESKERNEL) $(ORANGESKERNEL).debug
+	strip -s $(ORANGESKERNEL)
+	objcopy --add-gnu-debuglink=$(ORANGESKERNEL).debug $(ORANGESKERNEL)
 
 $(LIB) : $(LOBJS)
 	$(AR) $(ARFLAGS) $@ $^
