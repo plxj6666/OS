@@ -10,17 +10,7 @@
 #include "global.h"
 #include "proto.h"
 #include "log.h"
-
-PUBLIC void task_flush()
-{
-    while (!system_ready) {
-    }
-    while (1) {
-        flush_switch_logs();  // 刷新日志
-        printl("flush_switch_logs\n");
-        milli_delay(200);    // 每200ms刷新一次
-    }
-}
+#include "syslog.h"
 
 PUBLIC void flush_switch_logs()
 {
@@ -42,5 +32,19 @@ PUBLIC void flush_switch_logs()
             // 清空记录
             log->from_pid = 0;
         }
+        else {
+            break;
+        }
+    }
+}
+
+PUBLIC void task_flush()
+{
+    while (!system_ready) {
+    }
+    while (1) {
+        flush_switch_logs();  // 刷新日志
+        printl("flush_switch_logs\n");
+        milli_delay(200);    // 每200ms刷新一次
     }
 }
