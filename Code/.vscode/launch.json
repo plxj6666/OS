@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Kernel Debug (GDB)",
+            "name": "Kernel Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/kernel.bin",
+            "program": "${workspaceFolder}/kernel.bin.debug",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
