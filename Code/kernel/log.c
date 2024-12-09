@@ -19,12 +19,15 @@ PUBLIC void task_log()
         
         if (msg.type == LOG_MESSAGE) {
             struct log_msg* p = (struct log_msg*)va2la(msg.source, msg.BUF);
+            int result = 0; // 默认成功
             
-            /* 检查日志级别和类别 */
             if (p->level <= log_level && (log_categories & p->category)) {
-                printf("log have been written\n");
-                disklog(p->content);
+                result = disklog(p->content);
             }
+            
+            // 回复消息
+            msg.RETVAL = result;
+            send_recv(SEND, msg.source, &msg);
         }
     }
 }

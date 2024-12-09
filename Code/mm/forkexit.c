@@ -19,7 +19,7 @@
 #include "global.h"
 #include "keyboard.h"
 #include "proto.h"
-
+#include "syslog.h"
 
 PRIVATE void cleanup(struct proc * proc);
 
@@ -130,7 +130,7 @@ PUBLIC int do_fork()
 
     /* 在这里记录日志，此时进程已完全初始化 */
     syslog(LOG_LEVEL_INFO, LOG_CAT_PROCESS,
-           "Process forked: %s (PID:%d)",
+           "Process forked: %s (PID:%d)\n",
            p->name, child_pid);
 	return 0;
 }

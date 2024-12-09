@@ -73,17 +73,10 @@ PUBLIC int disklog(char * logstr)
 {
 	int device = root_inode->i_dev;
 	struct super_block * sb = get_super_block(device);
-	int nr_log_blk0_nr = sb->nr_sects - NR_SECTS_FOR_LOG;
+	int nr_log_blk0_nr = sb->nr_sects - NR_SECTS_FOR_LOG; /* 0x9D41-0x800=0x9541 */
 
-	char debug_buf[256];
-	sprintf(debug_buf, "Disklog: writing to sector %d\n", nr_log_blk0_nr);
-	printl(debug_buf);
-	
+	// 保证写入的地方是上次结束的地方，因为pos是静态的，他的生命周期是整个程序
 	static int pos = 0;
-	if (!pos) {
-		printl("Disklog: initializing log area\n");
-	}
-
 	if (!pos) { /* first time invoking this routine */
 
 #ifdef SET_LOG_SECT_SMAP_AT_STARTUP
@@ -843,4 +836,3 @@ PUBLIC void dump_fd_graph(const char * fmt, ...)
 	/* int pos = logbufpos += sprintf(logbuf + logbufpos, "--separator--\n"); */
 	/* printl("dump_fd_graph(%s)::logbufpos:%d\n", title, logbufpos); */
 }
-

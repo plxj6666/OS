@@ -308,8 +308,12 @@ enum msgtype {
 #define LOG_CAT_DEVICE    (1 << 5)  /* 设备相关日志 */
 
 /* Default Categories */
-#define LOG_CAT_DEFAULT   (LOG_CAT_ERROR | LOG_CAT_SYSTEM)  /* 默认开启错误和系统日志 */
+#define LOG_CAT_DEFAULT   (LOG_CAT_ERROR | LOG_CAT_SYSTEM | LOG_CAT_PROCESS | LOG_CAT_MEMORY | LOG_CAT_FS | LOG_CAT_DEVICE)   /* 默认开启所有日志*/
 
 #define LOG_MESSAGE    8
+
+/* Log Return Values */
+#define LOG_SUCCESS    0   /* 日志写入成功 */
+#define LOG_FAILED    -1   /* 日志写入失败 */
 
 #endif /* _ORANGES_CONST_H_ */

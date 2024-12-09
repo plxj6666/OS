@@ -191,7 +191,6 @@ PRIVATE void hd_rdwt(MESSAGE * p)
 	cmd.command	= (p->type == DEV_READ) ? ATA_READ : ATA_WRITE;
 	hd_cmd_out(&cmd);
 	
-	printl("\n");
 
 	int bytes_left = p->CNT;
 	void * la = (void*)va2la(p->PROC_NR, p->BUF);
@@ -200,7 +199,6 @@ PRIVATE void hd_rdwt(MESSAGE * p)
 		int bytes = min(SECTOR_SIZE, bytes_left);
 		if (p->type == DEV_READ) {
 
-			printl("\n");
 
 			interrupt_wait();
 			port_read(REG_DATA, hdbuf, SECTOR_SIZE);
