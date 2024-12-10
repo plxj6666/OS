@@ -15,7 +15,7 @@
 #include "proc.h"
 #include "global.h"
 #include "proto.h"
-
+static char buf[64];
 PRIVATE void block(struct proc* p);
 PRIVATE void unblock(struct proc* p);
 PRIVATE int  msg_send(struct proc* current, int dest, MESSAGE* m);
@@ -76,7 +76,7 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE* m, struct proc* p)
 	MESSAGE* mla = (MESSAGE*)va2la(caller, m);
 	mla->source = caller;
 	assert(mla->source != src_dest);
-	// 在系���调用执行前记录日志
+	// 在系统调用执行前记录日志
 	if (system_ready && 
 		src_dest != TASK_LOG && 
 		m->type != LOG_MESSAGE) {
@@ -609,6 +609,8 @@ PUBLIC void dump_msg(const char * title, MESSAGE* m)
 PRIVATE const char* get_syscall_name(int type)
 {
 	switch(type) {
+		case 0:            return "MSG_INIT";
+		
 		// 硬件中断
 		case HARD_INT:      return "HARD_INT";
 		
@@ -629,8 +631,6 @@ PRIVATE const char* get_syscall_name(int type)
 		// 进程控制相关
 		case SUSPEND_PROC:  return "SUSPEND_PROC";
 		case RESUME_PROC:   return "RESUME_PROC";
-		
-		// 内存管理相关
 		case EXEC:          return "EXEC";
 		case WAIT:          return "WAIT";
 		case FORK:          return "FORK";
@@ -646,7 +646,10 @@ PRIVATE const char* get_syscall_name(int type)
 		case DEV_WRITE:     return "DEV_WRITE";
 		case DEV_IOCTL:     return "DEV_IOCTL";
 		
-		default:            return "UNKNOWN";
+		default:            
+			memset(buf, 0, sizeof(buf));
+			sprintf(buf, "UNKNOWN(%d)", type);
+			return buf;
 	}
 }
 
