@@ -51,13 +51,37 @@ PUBLIC void task_fs()
 		switch (msgtype) {
 		case OPEN:
 			fs_msg.FD = do_open();
+			syslog(LOG_LEVEL_INFO, LOG_CAT_FS, 
+				   "Process %s(PID:%d) opened file '%s' (FD:%d)\n",
+				   pcaller->name, src, fs_msg.PATHNAME, fs_msg.FD);
 			break;
 		case CLOSE:
-			fs_msg.RETVAL = do_close();
+			{
+				// 在关闭前获取文件名
+				char filename[MAX_PATH];
+				struct inode* pin = pcaller->filp[fs_msg.FD]->fd_inode;
+				get_file_name(pin, filename);  // 需要实现这个函数
+				
+				fs_msg.RETVAL = do_close();
+				syslog(LOG_LEVEL_INFO, LOG_CAT_FS,
+					   "Process %s(PID:%d) closed file '%s' (FD:%d)\n",
+					   pcaller->name, src, filename, fs_msg.FD);
+			}
 			break;
 		case READ:
 		case WRITE:
-			fs_msg.CNT = do_rdwt();
+			{
+				char filename[MAX_PATH];
+				struct inode* pin = pcaller->filp[fs_msg.FD]->fd_inode;
+				get_file_name(pin, filename);
+				
+				fs_msg.CNT = do_rdwt();
+				syslog(LOG_LEVEL_DEBUG, LOG_CAT_FS,
+					   "Process %s(PID:%d) %s %d bytes from/to '%s' (FD:%d)\n",
+					   pcaller->name, src,
+					   msgtype == READ ? "read" : "wrote",
+					   fs_msg.CNT, filename, fs_msg.FD);
+			}
 			break;
 		case UNLINK:
 			fs_msg.RETVAL = do_unlink();
