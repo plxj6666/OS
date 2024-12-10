@@ -19,7 +19,7 @@
 #include "console.h"
 #include "global.h"
 #include "proto.h"
-
+#include "syslog.h"
 #include "hd.h"
 
 PRIVATE void init_fs();

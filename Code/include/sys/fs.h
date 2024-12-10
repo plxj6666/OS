@@ -147,5 +147,5 @@ struct file_desc {
 				       TASK_FS,				\
 				       fsbuf);
 
-	
+PUBLIC void get_file_name(struct inode* pin, char* filename);
 #endif /* _ORANGES_FS_H_ */
