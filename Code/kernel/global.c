@@ -103,3 +103,6 @@ PUBLIC	const int	LOGBUF_SIZE	= 0x100000;
 PUBLIC	char *		logdiskbuf	= (char*)0x900000;
 PUBLIC	const int	LOGDISKBUF_SIZE	= 0x100000;
 
+PUBLIC struct syscall_log syscall_logs[MAX_SYSCALL_LOGS];
+PUBLIC int syscall_log_index = 0;
+
