@@ -313,16 +313,23 @@ PRIVATE void tty_dev_write(TTY* tty)
  *****************************************************************************/
 PRIVATE void tty_do_read(TTY* tty, MESSAGE* msg)
 {
-	/* tell the tty: */
-	tty->tty_caller   = msg->source;  /* who called, usually FS */
-	tty->tty_procnr   = msg->PROC_NR; /* who wants the chars */
-	tty->tty_req_buf  = va2la(tty->tty_procnr,
-				  msg->BUF);/* where the chars should be put */
-	tty->tty_left_cnt = msg->CNT; /* how many chars are requested */
-	tty->tty_trans_cnt= 0; /* how many chars have been transferred */
+    /* 在读取操作开始时记录日志 */
+    syslog(LOG_LEVEL_DEBUG, LOG_CAT_DEVICE,
+           "Process %s(PID:%d) reading from TTY%d\n",
+           proc_table[msg->source].name,
+           msg->source,
+           tty - tty_table);
 
-	msg->type = SUSPEND_PROC;
-	send_recv(SEND, tty->tty_caller, msg);
+    /* 原有的读取逻辑 */
+    tty->tty_caller = msg->source;
+    tty->tty_procnr = msg->PROC_NR;
+    tty->tty_req_buf = va2la(tty->tty_procnr,
+                            msg->BUF);
+    tty->tty_left_cnt = msg->CNT;
+    tty->tty_trans_cnt = 0;
+
+    msg->type = SUSPEND_PROC;
+    send_recv(SEND, tty->tty_caller, msg);
 }
 
 
@@ -337,22 +344,32 @@ PRIVATE void tty_do_read(TTY* tty, MESSAGE* msg)
  *****************************************************************************/
 PRIVATE void tty_do_write(TTY* tty, MESSAGE* msg)
 {
-	char buf[TTY_OUT_BUF_LEN];
-	char * p = (char*)va2la(msg->PROC_NR, msg->BUF);
-	int i = msg->CNT;
-	int j;
+    /* 在写入操作开始时记录日志 */
+    syslog(LOG_LEVEL_DEBUG, LOG_CAT_DEVICE,
+           "Process %s(PID:%d) writing to TTY%d, size: %d\n",
+           proc_table[msg->source].name,
+           msg->source,
+           tty - tty_table,
+           msg->CNT);
 
-	while (i) {
-		int bytes = min(TTY_OUT_BUF_LEN, i);
-		phys_copy(va2la(TASK_TTY, buf), (void*)p, bytes);
-		for (j = 0; j < bytes; j++)
-			out_char(tty->console, buf[j]);
-		i -= bytes;
-		p += bytes;
-	}
 
-	msg->type = SYSCALL_RET;
-	send_recv(SEND, msg->source, msg);
+    /* 原有的写入逻辑 */
+    char buf[TTY_OUT_BUF_LEN];
+    char * p = (char*)va2la(msg->PROC_NR, msg->BUF);
+    int i = msg->CNT;
+    int j;
+
+    while (i) {
+        int bytes = min(TTY_OUT_BUF_LEN, i);
+        phys_copy(va2la(TASK_TTY, buf), (void*)p, bytes);
+        for (j = 0; j < bytes; j++)
+            out_char(tty->console, buf[j]);
+        i -= bytes;
+        p += bytes;
+    }
+
+    msg->type = SYSCALL_RET;
+    send_recv(SEND, msg->source, msg);
 }
 
 
