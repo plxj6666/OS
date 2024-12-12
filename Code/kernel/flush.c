@@ -120,16 +120,7 @@ PUBLIC void task_flush()
     while (!system_ready) {
     }
     while (1) {
-        disable_int();
-        int current_level = log_level;
-        int current_categories = log_categories;
-        enable_int();
-        
-        // 只有当日志系统启用时才刷新
-        if (current_level > 0 && current_categories != 0) {
-            flush_logs();
-        }
-        
-        milli_delay(200);    // 增加延迟到2000ms
+        flush_logs();
+        milli_delay(2000);    // 增加延迟到2000ms
     }
 }

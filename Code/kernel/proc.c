@@ -670,6 +670,22 @@ PUBLIC int sys_manage_log(int operation, int param)
         case 4:  // disable category
             disable_log_category(1 << (param-1));
             break;
+        case 5:  // disable all and clear logs
+            // 禁用所有日志级别和类别
+            log_level = 0;
+            log_categories = 0;
+            
+            // 清空所有日志缓冲区
+            for (int i = 0; i < MAX_SYSCALL_LOGS; i++) {
+                syscall_logs[i].valid = 0;
+            }
+            for (int i = 0; i < MAX_DEVICE_LOGS; i++) {
+                device_logs[i].valid = 0;
+            }
+            for (int i = 0; i < MAX_SWITCH_LOGS; i++) {
+                switch_logs[i].from_pid = 0;
+            }
+            break;
         default:
             return -1;
     }

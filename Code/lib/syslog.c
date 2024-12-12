@@ -40,6 +40,7 @@ PUBLIC int syslog(int level, int category, const char *fmt, ...)
     vsprintf(buf, fmt, arg);
     va_end(arg);
 
+    // 先检查日志级别和类别，避免不必要的消息发送
     disable_int();
     int current_level = log_level;
     int current_categories = log_categories;
@@ -51,20 +52,29 @@ PUBLIC int syslog(int level, int category, const char *fmt, ...)
         return 0;
     }
 
-    // 构造消息
-    MESSAGE msg;
-    struct log_msg log;
+    // 等待之前的消息处理完成
+    int retries = 3;
+    while (retries > 0) {
+        MESSAGE msg;
+        struct log_msg log;
+        
+        log.level = level;
+        log.category = category;
+        strcpy(log.content, buf);
+        msg.type = LOG_MESSAGE;
+        msg.BUF = &log;
+        
+        // 发送消息到日志任务
+        int result = send_recv(BOTH, TASK_LOG, &msg);
+        
+        if (result == 0) {
+            return msg.RETVAL;
+        }
+        
+        retries--;
+    }
     
-    log.level = level;
-    log.category = category;
-    strcpy(log.content, buf);
-    msg.type = LOG_MESSAGE;
-    msg.BUF = &log;
-    
-    // 发送消息到日志任务
-    send_recv(BOTH, TASK_LOG, &msg);
-    
-    return msg.RETVAL;
+    return 0;  // 如果重试失败，直接返回
 }
 
 PUBLIC void enable_log_level(int level)

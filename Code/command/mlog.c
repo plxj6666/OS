@@ -8,35 +8,41 @@
 #include "stdio.h"
 #include "syslog.h"
 
+void print_to_console(const char* str) {
+    // 获取当前控制台
+    int fd = 1;  // stdout
+    write(fd, str, strlen(str));
+}
+
 void print_menu() {
-    printf("\nLog Management Menu:\n");
-    printf("1. Enable log level\n");
-    printf("2. Disable log level\n");
-    printf("3. Enable log category\n");
-    printf("4. Disable log category\n");
-    printf("5. Exit\n");
-    printf("\nPlease enter your choice (1-5): ");
+    print_to_console("\nLog Management Menu:\n");
+    print_to_console("1. Enable log level\n");
+    print_to_console("2. Disable log level\n");
+    print_to_console("3. Enable log category\n");
+    print_to_console("4. Disable log category\n");
+    print_to_console("5. Exit\n");
+    print_to_console("\nPlease enter your choice (1-5): ");
 }
 
 void print_levels() {
-    printf("\nAvailable Log Levels:\n");
-    printf("1. ERROR (Level 1)\n");
-    printf("2. WARN  (Level 2)\n");
-    printf("3. INFO  (Level 3)\n");
-    printf("4. DEBUG (Level 4)\n");
-    printf("5. TRACE (Level 5)\n");
-    printf("\nPlease enter level number (1-5): ");
+    print_to_console("\nAvailable Log Levels:\n");
+    print_to_console("1. ERROR (Level 1)\n");
+    print_to_console("2. WARN  (Level 2)\n");
+    print_to_console("3. INFO  (Level 3)\n");
+    print_to_console("4. DEBUG (Level 4)\n");
+    print_to_console("5. TRACE (Level 5)\n");
+    print_to_console("\nPlease enter level number (1-5): ");
 }
 
 void print_categories() {
-    printf("\nAvailable Log Categories:\n");
-    printf("1. ERROR   - Error logs\n");
-    printf("2. SYSTEM  - System related logs\n");
-    printf("3. PROCESS - Process related logs\n");
-    printf("4. MEMORY  - Memory related logs\n");
-    printf("5. FS      - File system logs\n");
-    printf("6. DEVICE  - Device related logs\n");
-    printf("\nPlease enter category number (1-6): ");
+    print_to_console("\nAvailable Log Categories:\n");
+    print_to_console("1. ERROR   - Error logs\n");
+    print_to_console("2. SYSTEM  - System related logs\n");
+    print_to_console("3. PROCESS - Process related logs\n");
+    print_to_console("4. MEMORY  - Memory related logs\n");
+    print_to_console("5. FS      - File system logs\n");
+    print_to_console("6. DEVICE  - Device related logs\n");
+    print_to_console("\nPlease enter category number (1-6): ");
 }
 
 int main(int argc, char* argv[])
@@ -51,17 +57,8 @@ int main(int argc, char* argv[])
         choice = buf[0] - '0';
         
         if(choice == 5) {
-            // 退出前禁用所有日志类别和级别
-            int current_level = 5;  // 从最高级别开始禁用
-            while (current_level > 0) {
-                manage_log(2, current_level);  // 禁用每个级别
-                current_level--;
-            }
-            
-            // 禁用所有类别
-            for (int cat = 1; cat <= 6; cat++) {
-                manage_log(4, cat);  // 禁用每个类别
-            }
+            // 直接调用功能号5来禁用所有日志并清空缓冲区
+            manage_log(5, 0);  // param参数在这里不重要
             break;
         }
         
