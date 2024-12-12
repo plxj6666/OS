@@ -49,6 +49,9 @@ PUBLIC void task_fs()
 		pcaller = &proc_table[src];
 
 		switch (msgtype) {
+			case SEARCH:
+               		fs_msg.BUF = do_search_dir();
+                	break;
 		case OPEN:
 			fs_msg.FD = do_open();
 			break;
@@ -107,6 +110,7 @@ PUBLIC void task_fs()
 		case FORK:
 		case EXIT:
 		/* case LSEEK: */
+		case SEARCH:
 		case STAT:
 			break;
 		case RESUME_PROC:
