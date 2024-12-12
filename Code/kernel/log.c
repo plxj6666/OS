@@ -15,17 +15,24 @@ PUBLIC void task_log()
 {
     while (1) {
         MESSAGE msg;
+        disable_int();  // 关中断保护临界区
+        int current_level = log_level;
+        int current_categories = log_categories;
+        enable_int();
+        
         send_recv(RECEIVE, ANY, &msg);
         
         if (msg.type == LOG_MESSAGE) {
             struct log_msg* p = (struct log_msg*)va2la(msg.source, msg.BUF);
-            int result = 0; // 默认成功
+            int result = 0;
             
-            if (p->level <= log_level && (log_categories & p->category)) {
+            // 使用之前保存的值进行检查
+            if (p->level <= current_level && 
+                (current_categories & p->category)) {
                 result = disklog(p->content);
             }
             
-            // 回复消息
+            // 立即回复消息
             msg.RETVAL = result;
             send_recv(SEND, msg.source, &msg);
         }

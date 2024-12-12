@@ -42,9 +42,9 @@ PUBLIC int kernel_main()
 	/* 在其他初始化之前 */
 	k_reenter = 1;  /* 确保在系统初始化阶段不会触发系统调用 */
 
-	log_categories = LOG_CAT_DEFAULT;  /* 使用默认日志类别配置 */
+	log_categories = 0;  /* 默认开启进程日志 */
 	/* 初始化日志系统 */
-	log_level = LOG_LEVEL_DEBUG;
+	log_level = 0;
 	
 	for (i = 0; i < NR_TASKS + NR_PROCS; i++,p++,t++) {
 		if (i >= NR_TASKS + NR_NATIVE_PROCS) {
@@ -316,7 +316,7 @@ void Init()
 
 	printf("Init() is running ...\n");
 	/* extract `cmd.tar' */
-	// untar("/cmd.tar");
+	untar("/cmd.tar");
 			
 	printf("untar done\n");
 	char * tty_list[] = {"/dev_tty1", "/dev_tty2"};

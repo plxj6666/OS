@@ -308,9 +308,6 @@ enum msgtype {
 #define LOG_CAT_FS        (1 << 4)  /* 文件系统日志 */
 #define LOG_CAT_DEVICE    (1 << 5)  /* 设备相关日志 */
 
-/* Default Categories */
-#define LOG_CAT_DEFAULT   (LOG_CAT_ERROR | LOG_CAT_SYSTEM | LOG_CAT_PROCESS | LOG_CAT_MEMORY | LOG_CAT_FS | LOG_CAT_DEVICE)   /* 默认开启所有日志*/
-
 #define LOG_MESSAGE    8
 
 /* Log Return Values */

@@ -9,8 +9,8 @@ PUBLIC const char* get_log_category_str(int category);
 PUBLIC int syslog(int level, int category, const char *fmt, ...);
 
 /* 日志控制函数 */
-PUBLIC void set_log_level(int level);
-PUBLIC void set_log_categories(int categories);
+PUBLIC void enable_log_level(int level);
+PUBLIC void disable_log_level(int level);
 PUBLIC void enable_log_category(int category);
 PUBLIC void disable_log_category(int category);
 

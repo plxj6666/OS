@@ -16,6 +16,7 @@
 #include "global.h"
 #include "proto.h"
 #include "log.h"
+#include "syslog.h"
 static char buf[64];
 PRIVATE void block(struct proc* p);
 PRIVATE void unblock(struct proc* p);
@@ -652,5 +653,26 @@ PRIVATE const char* get_syscall_name(int type)
 			sprintf(buf, "UNKNOWN(%d)", type);
 			return buf;
 	}
+}
+
+PUBLIC int sys_manage_log(int operation, int param)
+{
+    switch(operation) {
+        case 1:  // enable level
+            enable_log_level(param);
+            break;
+        case 2:  // disable level
+            disable_log_level(param);
+            break;
+        case 3:  // enable category
+            enable_log_category(1 << (param-1));
+            break;
+        case 4:  // disable category
+            disable_log_category(1 << (param-1));
+            break;
+        default:
+            return -1;
+    }
+    return 0;
 }
 

@@ -19,7 +19,7 @@
 #include "global.h"
 #include "proto.h"
 #include "log.h"
-
+#include "stdarg.h"
 /*****************************************************************************
  *                                syslog
  *****************************************************************************/
@@ -32,38 +32,69 @@
  *****************************************************************************/
 PUBLIC int syslog(int level, int category, const char *fmt, ...)
 {
-    struct log_msg msg;
-    msg.level = level;
-    msg.category = category;
+    if (!system_ready) return 0;
     
-    va_list arg = (va_list)((char*)(&fmt) + 4);
-    vsprintf(msg.content, fmt, arg);
+    char buf[256];
+    va_list arg;
+    va_start(arg, fmt);
+    vsprintf(buf, fmt, arg);
+    va_end(arg);
+
+    disable_int();
+    int current_level = log_level;
+    int current_categories = log_categories;
+    enable_int();
+
+    // 如果不满足日志级别和类别要求,直接返回
+    if (level > current_level || 
+        !(current_categories & category)) {
+        return 0;
+    }
+
+    // 构造消息
+    MESSAGE msg;
+    struct log_msg log;
     
-    MESSAGE m;
-    m.type = LOG_MESSAGE;
-    m.BUF = &msg;
+    log.level = level;
+    log.category = category;
+    strcpy(log.content, buf);
+    msg.type = LOG_MESSAGE;
+    msg.BUF = &log;
     
-    return send_recv(BOTH, TASK_LOG, &m);
+    // 发送消息到日志任务
+    send_recv(BOTH, TASK_LOG, &msg);
+    
+    return msg.RETVAL;
 }
 
-PUBLIC void set_log_level(int level)
+PUBLIC void enable_log_level(int level)
 {
+    disable_int();
     log_level = level;
+    enable_int();
 }
 
-PUBLIC void set_log_categories(int categories) 
+PUBLIC void disable_log_level(int level)
 {
-    log_categories = categories;
+    disable_int();
+    if (log_level == level) {
+        log_level = 0;  // 或者设置为更低级别
+    }
+    enable_int();
 }
 
 PUBLIC void enable_log_category(int category)
 {
+    disable_int();
     log_categories |= category;
+    enable_int();
 }
 
 PUBLIC void disable_log_category(int category)
 {
+    disable_int();
     log_categories &= ~category;
+    enable_int();
 }
 
 /* 日志级别转字符串 */

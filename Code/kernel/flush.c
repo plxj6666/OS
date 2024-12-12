@@ -17,72 +17,100 @@ PUBLIC void flush_logs()
     char buf[256];
     int i;
     
-    // 刷新进程切换日志
-    for (i = 0; i < MAX_SWITCH_LOGS; i++) {
-        struct proc_switch_log* log = &switch_logs[i];
-        if (log->from_pid != 0) {  // 有效记录
-            sprintf(buf, "Process switch: %s(PID:%d) -> %s(PID:%d)\n",
-                    log->from_name, log->from_pid,
-                    log->to_name, log->to_pid);
-            syslog(LOG_LEVEL_DEBUG, LOG_CAT_PROCESS, buf);
-            
-            // 清空记录
-            log->from_pid = 0;
+    // 获取当前日志设置
+    disable_int();
+    int current_level = log_level;
+    int current_categories = log_categories;
+    enable_int();
+    
+    // 如果日志系统未启用，清空所有日志缓冲区并返回
+    if (current_level == 0 || current_categories == 0) {
+        // 清空所有缓冲区
+        for (i = 0; i < MAX_SYSCALL_LOGS; i++) {
+            syscall_logs[i].valid = 0;
         }
-        else {
-            break;
+        for (i = 0; i < MAX_DEVICE_LOGS; i++) {
+            device_logs[i].valid = 0;
+        }
+        for (i = 0; i < MAX_SWITCH_LOGS; i++) {
+            switch_logs[i].from_pid = 0;
+        }
+        return;
+    }
+    
+    // 一次只处理少量日志，避免消息堆积
+    int max_logs_per_flush = 5;
+    int processed = 0;
+    
+    // 处理进程切换日志
+    if (processed < max_logs_per_flush && 
+        current_level >= LOG_LEVEL_INFO && 
+        (current_categories & LOG_CAT_PROCESS)) {
+        for (i = 0; i < MAX_SWITCH_LOGS && processed < max_logs_per_flush; i++) {
+            if (switch_logs[i].from_pid != 0) {  // 有效记录
+                sprintf(buf, "Process switch: %s(PID:%d) -> %s(PID:%d)\n",
+                        switch_logs[i].from_name, switch_logs[i].from_pid,
+                        switch_logs[i].to_name, switch_logs[i].to_pid);
+                syslog(LOG_LEVEL_INFO, LOG_CAT_PROCESS, buf);
+                // 清空记录
+                switch_logs[i].from_pid = 0;
+                processed++;
+            }
         }
     }
     
-    // 刷新系统调用日志
-    for (i = 0; i < MAX_SYSCALL_LOGS; i++) {
-        struct syscall_log* log = &syscall_logs[i];
-        if (log->valid) {  // 有效记录
-            if (log->ret == 0) {
-                sprintf(buf, "System call from Process %s(PID:%d): %s\n",
-                        log->proc_name, log->pid, log->syscall_name);
-            } else {
-                sprintf(buf, "System call failed from Process %s(PID:%d): %s, ret=%d\n",
-                        log->proc_name, log->pid, log->syscall_name, log->ret);
+    // 处理系统调用日志
+    if (processed < max_logs_per_flush && 
+        current_level >= LOG_LEVEL_INFO && 
+        (current_categories & LOG_CAT_SYSTEM)) {
+        for (i = 0; i < MAX_SYSCALL_LOGS && processed < max_logs_per_flush; i++) {
+            if (syscall_logs[i].valid) {
+                if (syscall_logs[i].ret == 0) {
+                    sprintf(buf, "System call from Process %s(PID:%d): %s\n",
+                            syscall_logs[i].proc_name, syscall_logs[i].pid, 
+                            syscall_logs[i].syscall_name);
+                } else {
+                    sprintf(buf, "System call failed from Process %s(PID:%d): %s, ret=%d\n",
+                            syscall_logs[i].proc_name, syscall_logs[i].pid,
+                            syscall_logs[i].syscall_name, syscall_logs[i].ret);
+                }
+                syslog(LOG_LEVEL_INFO, LOG_CAT_SYSTEM, buf);
+                syscall_logs[i].valid = 0;
+                processed++;
             }
-            syslog(LOG_LEVEL_DEBUG, LOG_CAT_SYSTEM, buf);
-            
-            // 清空记录
-            log->valid = 0;
-        }
-        else {
-            break;
         }
     }
     
-    // 刷新设备操作日志
-    for (i = 0; i < MAX_DEVICE_LOGS; i++) {
-        struct device_op_log* log = &device_logs[i];
-        if (log->valid) {
-            char* op_str;
-            switch(log->op_type) {
-                case DEV_OPEN:  op_str = "opened"; break;
-                case DEV_CLOSE: op_str = "closed"; break;
-                case DEV_READ:  op_str = "reading from"; break;
-                case DEV_WRITE: op_str = "writing to"; break;
-                case DEV_IOCTL:
-                    sprintf(buf, "Process %s(PID:%d) IOCTL on HD partition %d, request: %d\n",
-                            log->proc_name, log->pid, log->device, log->position);
-                    break;
-                default: op_str = "unknown operation on"; break;
+    // 处理设备操作日志
+    if (processed < max_logs_per_flush && 
+        current_level >= LOG_LEVEL_INFO && 
+        (current_categories & LOG_CAT_DEVICE)) {
+        for (i = 0; i < MAX_DEVICE_LOGS && processed < max_logs_per_flush; i++) {
+            if (device_logs[i].valid) {
+                char* op_str;
+                switch(device_logs[i].op_type) {
+                    case DEV_OPEN:  op_str = "opened"; break;
+                    case DEV_CLOSE: op_str = "closed"; break;
+                    case DEV_READ:  op_str = "reading from"; break;
+                    case DEV_WRITE: op_str = "writing to"; break;
+                    case DEV_IOCTL:
+                        sprintf(buf, "Process %s(PID:%d) IOCTL on HD partition %d, request: %d\n",
+                                device_logs[i].proc_name, device_logs[i].pid, 
+                                device_logs[i].device, device_logs[i].position);
+                        break;
+                    default: op_str = "unknown operation on"; break;
+                }
+                
+                if (device_logs[i].op_type != DEV_IOCTL) {
+                    sprintf(buf, "Process %s(PID:%d) %s HD partition %d\n",
+                            device_logs[i].proc_name, device_logs[i].pid, 
+                            op_str, device_logs[i].device);
+                }
+                
+                syslog(LOG_LEVEL_INFO, LOG_CAT_DEVICE, buf);
+                device_logs[i].valid = 0;
+                processed++;
             }
-            
-            if (log->op_type == DEV_READ || log->op_type == DEV_WRITE) {
-                sprintf(buf, "Process %s(PID:%d) %s HD partition %d, position: %d, size: %d\n",
-                        log->proc_name, log->pid, op_str, log->device,
-                        log->position, log->size);
-            } else {
-                sprintf(buf, "Process %s(PID:%d) %s HD partition %d\n",
-                        log->proc_name, log->pid, op_str, log->device);
-            }
-            
-            syslog(LOG_LEVEL_DEBUG, LOG_CAT_DEVICE, buf);
-            log->valid = 0;
         }
     }
 }
@@ -92,8 +120,16 @@ PUBLIC void task_flush()
     while (!system_ready) {
     }
     while (1) {
-        flush_logs();  // 刷新日志
-        // printl("flush_logs\n");
-        milli_delay(200);    // 每200ms刷新一次
+        disable_int();
+        int current_level = log_level;
+        int current_categories = log_categories;
+        enable_int();
+        
+        // 只有当日志系统启用时才刷新
+        if (current_level > 0 && current_categories != 0) {
+            flush_logs();
+        }
+        
+        milli_delay(200);    // 增加延迟到2000ms
     }
 }

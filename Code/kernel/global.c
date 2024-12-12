@@ -59,8 +59,12 @@ PUBLIC	CONSOLE		console_table[NR_CONSOLES];
 
 PUBLIC	irq_handler	irq_table[NR_IRQ];
 
-PUBLIC	system_call	sys_call_table[NR_SYS_CALL] = {sys_printx,
-						       sys_sendrec};
+// 系统调用表
+PUBLIC	system_call	sys_call_table[NR_SYS_CALL] = {
+    sys_printx,
+    sys_sendrec,
+    sys_manage_log  // 添加日志管理系统调用
+};
 
 /* FS related below */
 /*****************************************************************************/
