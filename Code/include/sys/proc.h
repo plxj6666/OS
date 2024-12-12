@@ -123,30 +123,3 @@ struct task {
 				STACK_SIZE_TESTC + \
 				STACK_SIZE_SWITCH_LOG)
 
-// 进程切换日志 ，最多记录128条
-#define MAX_SWITCH_LOGS 128
-
-struct proc_switch_log {
-    char from_name[16];
-    int from_pid;
-    char to_name[16];
-    int to_pid;
-};
-
-EXTERN struct proc_switch_log switch_logs[MAX_SWITCH_LOGS];
-EXTERN int switch_log_index;
-
-// 系统调用日志，最多记录128条
-#define MAX_SYSCALL_LOGS 128
-
-struct syscall_log {
-    char proc_name[16];    // 进程名
-    int pid;               // 进程ID
-    char syscall_name[16]; // 系统调用名
-    int ret;              // 返回值
-    int valid;            // 是否有效
-};
-
-EXTERN struct syscall_log syscall_logs[MAX_SYSCALL_LOGS];
-EXTERN int syscall_log_index;
-

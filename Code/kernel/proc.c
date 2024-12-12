@@ -15,6 +15,7 @@
 #include "proc.h"
 #include "global.h"
 #include "proto.h"
+#include "log.h"
 static char buf[64];
 PRIVATE void block(struct proc* p);
 PRIVATE void unblock(struct proc* p);
