@@ -93,7 +93,7 @@ PUBLIC void task_flush()
     }
     while (1) {
         flush_logs();  // 刷新日志
-        printl("flush_logs\n");
+        // printl("flush_logs\n");
         milli_delay(200);    // 每200ms刷新一次
     }
 }
