@@ -107,38 +107,38 @@ PUBLIC void task_fs()
 			break;
 		}
 
-#ifdef ENABLE_DISK_LOG
-		char * msg_name[128];
-		msg_name[OPEN]   = "OPEN";
-		msg_name[CLOSE]  = "CLOSE";
-		msg_name[READ]   = "READ";
-		msg_name[WRITE]  = "WRITE";
-		msg_name[LSEEK]  = "LSEEK";
-		msg_name[UNLINK] = "UNLINK";
-		/* msg_name[FORK]   = "FORK"; */
-		/* msg_name[EXIT]   = "EXIT"; */
-		/* msg_name[STAT]   = "STAT"; */
+// #ifdef ENABLE_DISK_LOG
+// 		char * msg_name[128];
+// 		msg_name[OPEN]   = "OPEN";
+// 		msg_name[CLOSE]  = "CLOSE";
+// 		msg_name[READ]   = "READ";
+// 		msg_name[WRITE]  = "WRITE";
+// 		msg_name[LSEEK]  = "LSEEK";
+// 		msg_name[UNLINK] = "UNLINK";
+// 		/* msg_name[FORK]   = "FORK"; */
+// 		/* msg_name[EXIT]   = "EXIT"; */
+// 		/* msg_name[STAT]   = "STAT"; */
 
-		switch (msgtype) {
-		case UNLINK:
-			dump_fd_graph("%s just finished. (pid:%d)",
-				      msg_name[msgtype], src);
-			//panic("");
-		case OPEN:
-		case CLOSE:
-		case READ:
-		case WRITE:
-		case FORK:
-		case EXIT:
-		/* case LSEEK: */
-		case STAT:
-			break;
-		case RESUME_PROC:
-			break;
-		default:
-			assert(0);
-		}
-#endif
+// 		switch (msgtype) {
+// 		case UNLINK:
+// 			dump_fd_graph("%s just finished. (pid:%d)",
+// 				      msg_name[msgtype], src);
+// 			//panic("");
+// 		case OPEN:
+// 		case CLOSE:
+// 		case READ:
+// 		case WRITE:
+// 		case FORK:
+// 		case EXIT:
+// 		/* case LSEEK: */
+// 		case STAT:
+// 			break;
+// 		case RESUME_PROC:
+// 			break;
+// 		default:
+// 			assert(0);
+// 		}
+// #endif
 
 		/* reply */
 		if (fs_msg.type != SUSPEND_PROC) {
