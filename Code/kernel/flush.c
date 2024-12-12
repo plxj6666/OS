@@ -54,6 +54,37 @@ PUBLIC void flush_logs()
             break;
         }
     }
+    
+    // 刷新设备操作日志
+    for (i = 0; i < MAX_DEVICE_LOGS; i++) {
+        struct device_op_log* log = &device_logs[i];
+        if (log->valid) {
+            char* op_str;
+            switch(log->op_type) {
+                case DEV_OPEN:  op_str = "opened"; break;
+                case DEV_CLOSE: op_str = "closed"; break;
+                case DEV_READ:  op_str = "reading from"; break;
+                case DEV_WRITE: op_str = "writing to"; break;
+                case DEV_IOCTL:
+                    sprintf(buf, "Process %s(PID:%d) IOCTL on HD partition %d, request: %d\n",
+                            log->proc_name, log->pid, log->device, log->position);
+                    break;
+                default: op_str = "unknown operation on"; break;
+            }
+            
+            if (log->op_type == DEV_READ || log->op_type == DEV_WRITE) {
+                sprintf(buf, "Process %s(PID:%d) %s HD partition %d, position: %d, size: %d\n",
+                        log->proc_name, log->pid, op_str, log->device,
+                        log->position, log->size);
+            } else {
+                sprintf(buf, "Process %s(PID:%d) %s HD partition %d\n",
+                        log->proc_name, log->pid, op_str, log->device);
+            }
+            
+            syslog(LOG_LEVEL_DEBUG, LOG_CAT_DEVICE, buf);
+            log->valid = 0;
+        }
+    }
 }
 
 PUBLIC void task_flush()

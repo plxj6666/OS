@@ -106,3 +106,6 @@ PUBLIC	const int	LOGDISKBUF_SIZE	= 0x100000;
 PUBLIC struct syscall_log syscall_logs[MAX_SYSCALL_LOGS];
 PUBLIC int syscall_log_index = 0;
 
+PUBLIC struct device_op_log device_logs[MAX_DEVICE_LOGS];
+PUBLIC int device_log_index = 0;
+

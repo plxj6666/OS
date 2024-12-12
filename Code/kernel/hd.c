@@ -20,7 +20,7 @@
 #include "global.h"
 #include "proto.h"
 #include "hd.h"
-
+#include "log.h"
 
 PRIVATE void	init_hd			();
 PRIVATE void	hd_open			(int device);
@@ -64,6 +64,15 @@ PUBLIC void task_hd()
 
 		switch (msg.type) {
 		case DEV_OPEN:
+			if (system_ready && msg.source != TASK_LOG) {
+				struct device_op_log* log = &device_logs[device_log_index];
+				strcpy(log->proc_name, proc_table[msg.source].name);
+				log->pid = msg.source;
+				log->device = msg.DEVICE;
+				log->op_type = DEV_OPEN;
+				log->valid = 1;
+				device_log_index = (device_log_index + 1) % MAX_DEVICE_LOGS;
+			}
 			hd_open(msg.DEVICE);
 			break;
 
@@ -73,10 +82,31 @@ PUBLIC void task_hd()
 
 		case DEV_READ:
 		case DEV_WRITE:
+			if (system_ready && msg.source != TASK_LOG) {
+				struct device_op_log* log = &device_logs[device_log_index];
+				strcpy(log->proc_name, proc_table[msg.source].name);
+				log->pid = msg.source;
+				log->device = msg.DEVICE;
+				log->op_type = msg.type;
+				log->position = msg.POSITION;
+				log->size = msg.CNT;
+				log->valid = 1;
+				device_log_index = (device_log_index + 1) % MAX_DEVICE_LOGS;
+			}
 			hd_rdwt(&msg);
 			break;
 
 		case DEV_IOCTL:
+			if (system_ready && msg.source != TASK_LOG) {
+				struct device_op_log* log = &device_logs[device_log_index];
+				strcpy(log->proc_name, proc_table[msg.source].name);
+				log->pid = msg.source;
+				log->device = msg.DEVICE;
+				log->op_type = DEV_IOCTL;
+				log->position = msg.REQUEST;
+				log->valid = 1;
+				device_log_index = (device_log_index + 1) % MAX_DEVICE_LOGS;
+			}
 			hd_ioctl(&msg);
 			break;
 
