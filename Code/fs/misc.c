@@ -191,3 +191,20 @@ PUBLIC int strip_path(char * filename, const char * pathname,
 	return 0;
 }
 
+PUBLIC void get_file_name(struct inode* inode, char* filename)
+{
+    // 默认情况下使用inode号
+    sprintf(filename, "inode-%d", inode->i_num);
+    
+    // 如果是特殊设备文件
+    if (inode->i_mode == I_CHAR_SPECIAL) {
+        switch(inode->i_start_sect) {
+            case DEV_CHAR_TTY:
+                strcpy(filename, "dev_tty0");
+                break;
+            // 添加其他设备的处理...
+            default:
+                sprintf(filename, "dev-%d", inode->i_start_sect);
+        }
+    }
+}

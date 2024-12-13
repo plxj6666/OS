@@ -30,10 +30,6 @@ int main(int argc, char* argv[]) {
     }
     int pid = my_atoi(argv[1]);
 
-    if (pid > NR_TASKS + NR_NATIVE_PROCS) {
-        printf("Error: Invalid PID %d. Must be <= %d.\n", pid, NR_TASKS + NR_NATIVE_PROCS);
-        return -1;
-    }
 
     MESSAGE msg;
     msg.PID = pid;

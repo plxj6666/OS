@@ -62,3 +62,9 @@ extern	char *			logbuf;
 extern	const int		LOGBUF_SIZE;
 extern	char *			logdiskbuf;
 extern	const int		LOGDISKBUF_SIZE;
+
+EXTERN int log_level;        /* 当前日志级别 */
+EXTERN int log_categories;   /* 启用的日志类别位图 */
+
+/* 系统初始化完成标志 */
+EXTERN int system_ready;

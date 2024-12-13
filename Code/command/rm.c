@@ -1,28 +1,42 @@
+#include "type.h"
 #include "stdio.h"
+#include "const.h"
+#include "protect.h"
+#include "string.h"
+#include "fs.h"
+#include "proc.h"
+#include "tty.h"
+#include "console.h"
+#include "global.h"
+#include "proto.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     if (argc < 2) {
-        printf("Please provide a filename.\n");
-        return 1;
-    }
-
-    struct stat buffer;
-    // 使用 stat 函数检查文件是否存在
-    if (stat(argv[1], &buffer) == -1) {
-        printf("The file %s does not exist.\n", argv[1]);
-        return 1; 
-    }
-
-    // 尝试删除文件
-    if (unlink(argv[1]) == -1) {
-        printf("Failed to remove file %s, please check your authority or try again later.\n", argv[1]);
+        printf("Usage: rm <filename>\n");
         return -1;
     }
 
-    // 删除成功，输出成功信息
-    printf("Successfully removed file %s\n", argv[1]);
+    
+    MESSAGE msg;
+    msg.type = UNLINK;
+    msg.PATHNAME = argv[1];
+    msg.NAME_LEN = strlen(argv[1]);
+    
+    int result = send_recv(BOTH, TASK_FS, &msg);
+    
+    if (result != 0) {
+        printf("System error when removing file %s\n", argv[1]);
+        return -1;
+    }
+    
+    if (msg.RETVAL != 0) {
+        printf("File %s does not exist or cannot be removed\n", argv[1]);
+        return -1;
+    }
+
+    printf("File %s removed.\n", argv[1]);
     return 0;
 }
-
 
 

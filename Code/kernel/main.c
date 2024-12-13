@@ -319,16 +319,22 @@ void shabby_shell(const char * tty_name)
 		}
 	
 		if(pid1 != 0 && pid2 !=0) {
-			int s1;
-			wait(&s1);
+			// 父进程等待子进程完成
+				int s1;
+				wait(&s1);
+				if (mul_task) {
+					wait(&s1);  // 等待第二个子进程
+				}
 		} else if (pid1 == 0) {
-			if(mul_task) {
-				printf("[pid: %d]command: %s\n", getpid(), argv1[0]);
-			}
-			execv(argv1[0], argv1);
+			// 子进程1
+				if(mul_task) {
+					printf("[pid: %d]command: %s\n", getpid(), argv1[0]);
+				}
+				execv(argv1[0], argv1);
 		} else if (pid2 != -1) {
-			printf("[pid: %d]command: %s\n", getpid(), argv2[0]);
-			execv(argv2[0], argv2);
+			// 子进程2
+				printf("[pid: %d]command: %s\n", getpid(), argv2[0]);
+				execv(argv2[0], argv2);
 		}
 	}
 		
@@ -430,4 +436,5 @@ PUBLIC void panic(const char *fmt, ...)
 	/* should never arrive here */
 	__asm__ __volatile__("ud2");
 }
+
 
