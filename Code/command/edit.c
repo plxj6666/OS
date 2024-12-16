@@ -1,4 +1,14 @@
+#include "type.h"
 #include "stdio.h"
+#include "const.h"
+#include "protect.h"
+#include "string.h"
+#include "fs.h"
+#include "proc.h"
+#include "tty.h"
+#include "console.h"
+#include "global.h"
+#include "proto.h"
 #include "string.h"
 
 #define MAX_BUF_SIZE 1024
@@ -85,7 +95,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        ssize_t fileLength = bytesRead;
+        // ssize_t fileLength = bytesRead;
 
         char tempBuffer[MAX_BUF_SIZE];
         strcpy(tempBuffer, buf);

@@ -12,8 +12,8 @@ CFLAGS		= -I ../include/ -I ../include/sys/ -c -fno-builtin -fno-stack-protector
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd ikun touch rm ps kill help cls read edit ls mlog attack canary
-
+BIN		= echo pwd ikun touch rm ps kill help cls read edit ls mlog attack
+ 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
 
@@ -128,11 +128,11 @@ attack : attack.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $? 
 
 	
-canary.o: canary.c ../include/type.h ../include/stdio.h
-	$(CC) $(CFLAGS) -o $@ $<
+# canary.o: canary.c ../include/type.h ../include/stdio.h
+# 	$(CC) $(CFLAGS) -o $@ $<
 
-canary : canary.o start.o $(LIB)
-	$(LD) $(LDFLAGS) -o $@ $? 
+# canary : canary.o start.o $(LIB)
+# 	$(LD) $(LDFLAGS) -o $@ $? 
 
 
 

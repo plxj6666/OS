@@ -6,13 +6,8 @@
 megs: 32
 
 # filename of ROM images
-<<<<<<< HEAD
 romimage: file=/usr/local/share/bochs/BIOS-bochs-latest
 vgaromimage: file=/usr/local/share/bochs/VGABIOS-lgpl-latest
-=======
-romimage: file=/home/ericzzz/os/bochs-2.7/bios/BIOS-bochs-latest
-vgaromimage: file=/home/ericzzz/os/bochs-2.7/bios/VGABIOS-lgpl-latest
->>>>>>> origin/zhanghx
 
 # what disk images will be used
 floppya: 1_44=a.img, status=inserted

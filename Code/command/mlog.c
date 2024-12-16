@@ -7,7 +7,7 @@
 #include "proto.h"
 #include "stdio.h"
 #include "syslog.h"
-
+#include "string.h"
 void print_to_console(const char* str) {
     // 获取当前控制台
     int fd = 1;  // stdout

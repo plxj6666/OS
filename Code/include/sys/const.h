@@ -299,7 +299,7 @@ enum msgtype {
 #define LOG_LEVEL_INFO     3
 #define LOG_LEVEL_DEBUG    4
 #define LOG_LEVEL_TRACE    5
-#define NULL 0
+#define INT_NULL 0
 #define true 1
 #define false 0
 
