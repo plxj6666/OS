@@ -314,3 +314,6 @@ enum msgtype {
 #define LOG_SUCCESS    0   /* 日志写入成功 */
 #define LOG_FAILED    -1   /* 日志写入失败 */
 
+#endif /* _ORANGES_CONST_H_ */
+
+
