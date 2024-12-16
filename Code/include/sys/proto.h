@@ -144,10 +144,13 @@ PUBLIC void spin(char * func_name);
 PUBLIC	int	sys_sendrec(int function, int src_dest, MESSAGE* m, struct proc* p);
 PUBLIC	int	sys_printx(int _unused1, int _unused2, char* s, struct proc * p_proc);
 PUBLIC	int	sys_manage_log(int operation, int param);  // 声明管理日志系统调用
+PUBLIC  void sys_canary_check();
+
 /* syscall.asm */
 PUBLIC  void    sys_call();             /* int_handler */
 
 /* 系统调用 - 用户级 */
 PUBLIC	int	sendrec(int function, int src_dest, MESSAGE* p_msg);
 PUBLIC	int	printx(char* str);
-PUBLIC  int     manage_log(int operation, int param);  // 管理日志
+PUBLIC  int     manage_log(int operation, int param);  
+PUBLIC  void 	canary_check();

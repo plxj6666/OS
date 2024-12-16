@@ -385,7 +385,6 @@ PRIVATE int msg_receive(struct proc* current, int src, MESSAGE* m)
 		assert(p_who_wanna_recv->p_msg == 0);
 		assert(p_who_wanna_recv->p_sendto == NO_TASK);
 		assert(p_who_wanna_recv->has_int_msg == 0);
-
 		enable_int();
 		return 0;
 	}
@@ -692,3 +691,36 @@ PUBLIC int sys_manage_log(int operation, int param)
     return 0;
 }
 
+
+
+/*****************************************************************************
+ *                             sys_canary_check
+ *****************************************************************************/
+
+PUBLIC void sys_canary_check() {
+    struct proc *p = p_proc_ready;
+	
+    // 只对用户进程检查
+    if (p - proc_table >= NR_TASKS + NR_NATIVE_PROCS) {
+        if (strcmp(p->name, "attack_stack") == 0) return;
+        if (canary_enabled == 0) return;
+        
+        int offset_canary = p->regs.ebp - 16;
+        int ss = p->regs.ss;
+        int base = reassembly(
+            p->ldts[ss >> 3].base_high, 24,
+            p->ldts[ss >> 3].base_mid, 16,
+            p->ldts[ss >> 3].base_low
+        );
+        unsigned int canary_address = offset_canary + base;
+        unsigned int canary = *(unsigned int *)(canary_address);
+
+
+        if (canary != 0xffffffff) {
+			printl("Stack overflow occurred in process\n");
+            //printl("Stack overflow occurred in process\n");
+			//printl("canary%x\n",canary);
+        }
+        return;
+    }
+}
