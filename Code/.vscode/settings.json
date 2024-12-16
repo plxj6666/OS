@@ -6,6 +6,14 @@
     "lldb.commandCompletions": true,
     "files.associations": {
         "log.h": "c",
-        "proto.h": "c"
+        "proto.h": "c",
+        "syslog.h": "c",
+        "proc.h": "c",
+        "string.h": "c",
+        "cstdarg": "c",
+        "cstring": "c",
+        "locale": "c",
+        "stdio.h": "c",
+        "__config": "c"
     },
 } 

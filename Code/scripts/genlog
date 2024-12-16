@@ -23,8 +23,8 @@ echo >> $syslog_file
 echo
 # cat $syslog_file | sed '1,3d' > filedesc.dot
 # cat filedesc.dot | ./splitgraphs
-gthumb . &
-echo
+# gthumb . &
+# echo
 
 exit 0
 
