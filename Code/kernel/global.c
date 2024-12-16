@@ -52,8 +52,11 @@ PUBLIC	CONSOLE		console_table[NR_CONSOLES];
 
 PUBLIC	irq_handler	irq_table[NR_IRQ];
 
-PUBLIC	system_call	sys_call_table[NR_SYS_CALL] = {sys_printx,
-						       sys_sendrec};
+PUBLIC	system_call	sys_call_table[NR_SYS_CALL] = {
+    sys_printx,
+    sys_sendrec,
+    sys_canary_check,
+};
 
 /* FS related below */
 /*****************************************************************************/
@@ -96,3 +99,4 @@ PUBLIC	const int	LOGBUF_SIZE	= 0x100000;
 PUBLIC	char *		logdiskbuf	= (char*)0x900000;
 PUBLIC	const int	LOGDISKBUF_SIZE	= 0x100000;
 
+unsigned int canary_enabled = false;

@@ -62,3 +62,4 @@ extern	char *			logbuf;
 extern	const int		LOGBUF_SIZE;
 extern	char *			logdiskbuf;
 extern	const int		LOGDISKBUF_SIZE;
+extern  unsigned int    canary_enabled;   // 是否启用检查

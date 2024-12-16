@@ -39,6 +39,7 @@ PUBLIC void clock_handler(int irq)
 
 	if (key_pressed)
 		inform_int(TASK_TTY);
+    canary_check();
 
 	if (k_reenter != 0) {
 		return;

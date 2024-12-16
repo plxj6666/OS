@@ -51,7 +51,7 @@ PUBLIC int vsprintf(char *buf, const char *fmt, va_list args)
 
 	char	inner_buf[STR_DEFAULT_LEN];
 	char	cs;
-	int	align_nr;
+	int	align_nr = 0;
 
 	for (p=buf;*fmt;fmt++) {
 		if (*fmt != '%') {
@@ -82,6 +82,8 @@ PUBLIC int vsprintf(char *buf, const char *fmt, va_list args)
 		}
 
 		char * q = inner_buf;
+
+
 		memset(q, 0, sizeof(inner_buf));
 
 		switch (*fmt) {
@@ -111,7 +113,6 @@ PUBLIC int vsprintf(char *buf, const char *fmt, va_list args)
 		default:
 			break;
 		}
-
 		int k;
 		for (k = 0; k < ((align_nr > strlen(inner_buf)) ? (align_nr - strlen(inner_buf)) : 0); k++) {
 			*p++ = cs;
