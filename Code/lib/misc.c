@@ -20,6 +20,52 @@
 #include "keyboard.h"
 #include "proto.h"
 
+char *strchr(const char *str, int c) {
+    while (*str != '\0') {   // 遍历字符串直到结束符 '\0'
+        if (*str == c) {     // 如果找到目标字符
+            return (char*)str; // 返回该字符的位置
+        }
+        str++; // 移动到下一个字符
+    }
+    // 如果没有找到，返回 NULL
+    return NULL;
+}
+
+
+PUBLIC  char* strtok(char *str, const char *delim) {
+    static char *next_token = NULL;  // 静态变量，记录字符串的当前位置
+    // 如果传入了新的字符串
+    if (str != NULL) {
+        next_token = str;
+    }
+
+    if (next_token == NULL) {
+        return NULL;
+    }
+
+    // 跳过所有的分隔符
+    char *start = next_token;
+    while (*next_token != '\0' && strchr(delim, *next_token) != NULL) {
+        next_token++;
+    }
+
+    // 如果已经到达字符串的结尾
+    if (*next_token == '\0') {
+        return NULL;
+    }
+
+    // 记录当前的 token，替换分隔符为 '\0'
+    start = next_token;
+    while (*next_token != '\0' && strchr(delim, *next_token) == NULL) {
+        next_token++;
+    }
+    if (*next_token != '\0') {
+        *next_token = '\0';  // 结束当前的 token
+        next_token++;        // 移动到下一个字符
+    }
+
+    return start;  // 返回当前的 token
+}
 /*****************************************************************************
  *                                send_recv
  *****************************************************************************/

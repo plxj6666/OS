@@ -8,11 +8,11 @@ DASM		= objdump
 CC		= gcc
 LD		= ld
 ASMFLAGS	= -I ../include/ -f elf
-CFLAGS		= -I ../include/ -I ../include/sys/ -c -fno-builtin -fno-stack-protector -Wall -g
+CFLAGS		= -I ../include/ -I ../include/sys/ -c -fno-builtin -fno-stack-protector -Wall
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd mlog touch ls rm
+BIN		= echo pwd ikun touch rm ps kill help cls read edit ls mlog
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -60,19 +60,62 @@ mlog : mlog.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
 
 touch.o: touch.c
+ikun.o: ikun.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+ikun : ikun.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+touch.o: touch.c ../include/type.h ../include/stdio.h 
 	$(CC) $(CFLAGS) -o $@ $<
 
 touch : touch.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
 
-ls.o: ls.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-ls : ls.o start.o $(LIB)
-	$(LD) $(LDFLAGS) -o $@ $?
-
-rm.o: rm.c
+rm.o: rm.c ../include/type.h ../include/stdio.h
 	$(CC) $(CFLAGS) -o $@ $<
 
 rm : rm.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+ps.o: ps.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+ps : ps.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+kill.o: kill.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+kill : kill.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+help.o: help.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+help : help.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+cls.o: cls.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+cls : cls.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+read.o: read.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+read : read.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+edit.o:edit.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+edit :edit.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+ls.o:ls.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+ls :ls.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?

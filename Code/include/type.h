@@ -5,6 +5,8 @@
                                                     Forrest Yu, 2005
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+typedef int pid_t;
+
 #ifndef	_ORANGES_TYPE_H_
 #define	_ORANGES_TYPE_H_
 
@@ -54,6 +56,7 @@ struct mess3 {
 typedef struct {
 	int source;
 	int type;
+	char pBUF[200];
 	union {
 		struct mess1 m1;
 		struct mess2 m2;

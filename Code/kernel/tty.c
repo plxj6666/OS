@@ -211,7 +211,7 @@ PUBLIC void in_process(TTY* tty, u32 key)
 		case F11:
 		case F12:
 			if ((key & FLAG_SHIFT_L) ||
-			    (key & FLAG_SHIFT_R)) {	/* Shift + F1~F12 */
+			    (key & FLAG_SHIFT_R)) {	/* SHIFT + F1~F12 */
 				select_console(raw_code - F1);
 			}
 			break;
