@@ -1,0 +1,45 @@
+# 编译生成的文件
+*.bin
+*.debug
+*.map
+*.img
+*.a
+*.o
+*.elf
+*.com
+*.out
+
+# 特定文件
+Code/kernel.bin
+Code/kernel.bin.debug
+Code/krnl.map
+Code/a.img
+Code/80m.img
+Code/lib/orangescrt.a
+Code/inst.tar
+
+# bochs配置文件
+Code/bochsrc
+
+# 目录下的编译文件
+Code/command/*.o
+Code/command/*.bin
+Code/command/kernel.bin
+Code/lib/*.o
+Code/kernel/*.o
+Code/fs/*.o
+Code/mm/*.o
+Code/boot/*.bin
+
+# 调试文件
+*.debug
+*.sym
+
+# 临时文件
+*~
+*.swp
+*.swo
+.DS_Store
+
+# IDE配置
+.vscode/ipch
