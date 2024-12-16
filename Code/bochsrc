@@ -32,9 +32,3 @@ mouse: enabled=0
 
 # enable key mapping, using US layout as default.
 #keyboard_apping: enabled=1, map=/usr/share/bochs/keymaps/x11-pc-us.map
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> origin/yh
