@@ -17,6 +17,8 @@ Code/a.img
 Code/80m.img
 Code/lib/orangescrt.a
 Code/inst.tar
+Code/scripts/llsyslog
+Code/scripts/splitgraphs
 
 # bochs配置文件
 Code/bochsrc
@@ -25,6 +27,7 @@ Code/bochsrc
 Code/command/*.o
 Code/command/*.bin
 Code/command/kernel.bin
+Code/command/inst.tar
 Code/lib/*.o
 Code/kernel/*.o
 Code/fs/*.o
@@ -43,3 +46,4 @@ Code/boot/*.bin
 
 # IDE配置
 .vscode/ipch
+.vscode/
