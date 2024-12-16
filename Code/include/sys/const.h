@@ -1,4 +1,3 @@
-
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                             const.h
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -137,7 +136,9 @@
 #define TASK_HD		2
 #define TASK_FS		3
 #define TASK_MM		4
-#define INIT		5
+#define TASK_LOG		5
+#define TASK_FLUSH  6  // 新增日志刷新任务
+#define INIT		7  // INIT的序号往后移
 #define ANY		(NR_TASKS + NR_PROCS + 10)
 #define NO_TASK		(NR_TASKS + NR_PROCS + 20)
 
@@ -291,6 +292,26 @@ enum msgtype {
 
 #define	NR_DEFAULT_FILE_SECTS	2048 /* 2048 * 512 = 1MB */
 
+/* Log Levels */
+#define LOG_LEVEL_OFF      0
+#define LOG_LEVEL_ERROR    1  
+#define LOG_LEVEL_WARN     2
+#define LOG_LEVEL_INFO     3
+#define LOG_LEVEL_DEBUG    4
+#define LOG_LEVEL_TRACE    5
 
+/* Log Categories */
+#define LOG_CAT_ERROR     (1 << 0)  /* 错误日志 */
+#define LOG_CAT_SYSTEM    (1 << 1)  /* 系统相关日志 */
+#define LOG_CAT_PROCESS   (1 << 2)  /* 进程相关日志 */
+#define LOG_CAT_MEMORY    (1 << 3)  /* 内存相关日志 */
+#define LOG_CAT_FS        (1 << 4)  /* 文件系统日志 */
+#define LOG_CAT_DEVICE    (1 << 5)  /* 设备相关日志 */
+
+#define LOG_MESSAGE    8
+
+/* Log Return Values */
+#define LOG_SUCCESS    0   /* 日志写入成功 */
+#define LOG_FAILED    -1   /* 日志写入失败 */
 
 #endif /* _ORANGES_CONST_H_ */

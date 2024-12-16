@@ -19,7 +19,7 @@
 #include "console.h"
 #include "global.h"
 #include "proto.h"
-
+#include "syslog.h"
 #include "hd.h"
 
 PRIVATE void init_fs();
@@ -40,7 +40,7 @@ PUBLIC void task_fs()
 	printl("{FS} Task FS begins.\n");
 
 	init_fs();
-
+	system_ready = 1;
 	while (1) {
 		send_recv(RECEIVE, ANY, &fs_msg);
 
@@ -51,13 +51,37 @@ PUBLIC void task_fs()
 		switch (msgtype) {
 		case OPEN:
 			fs_msg.FD = do_open();
+			syslog(LOG_LEVEL_INFO, LOG_CAT_FS, 
+				   "Process %s(PID:%d) opened file '%s' (FD:%d)\n",
+				   pcaller->name, src, fs_msg.PATHNAME, fs_msg.FD);
 			break;
 		case CLOSE:
-			fs_msg.RETVAL = do_close();
+			{
+				// 在关闭前获取文件名
+				char filename[MAX_PATH];
+				struct inode* pin = pcaller->filp[fs_msg.FD]->fd_inode;
+				get_file_name(pin, filename);  // 需要实现这个函数
+				
+				fs_msg.RETVAL = do_close();
+				syslog(LOG_LEVEL_INFO, LOG_CAT_FS,
+					   "Process %s(PID:%d) closed file '%s' (FD:%d)\n",
+					   pcaller->name, src, filename, fs_msg.FD);
+			}
 			break;
 		case READ:
 		case WRITE:
-			fs_msg.CNT = do_rdwt();
+			{
+				char filename[MAX_PATH];
+				struct inode* pin = pcaller->filp[fs_msg.FD]->fd_inode;
+				get_file_name(pin, filename);
+				
+				fs_msg.CNT = do_rdwt();
+				syslog(LOG_LEVEL_DEBUG, LOG_CAT_FS,
+					   "Process %s(PID:%d) %s %d bytes from/to '%s' (FD:%d)\n",
+					   pcaller->name, src,
+					   msgtype == READ ? "read" : "wrote",
+					   fs_msg.CNT, filename, fs_msg.FD);
+			}
 			break;
 		case UNLINK:
 			fs_msg.RETVAL = do_unlink();
@@ -83,38 +107,38 @@ PUBLIC void task_fs()
 			break;
 		}
 
-#ifdef ENABLE_DISK_LOG
-		char * msg_name[128];
-		msg_name[OPEN]   = "OPEN";
-		msg_name[CLOSE]  = "CLOSE";
-		msg_name[READ]   = "READ";
-		msg_name[WRITE]  = "WRITE";
-		msg_name[LSEEK]  = "LSEEK";
-		msg_name[UNLINK] = "UNLINK";
-		/* msg_name[FORK]   = "FORK"; */
-		/* msg_name[EXIT]   = "EXIT"; */
-		/* msg_name[STAT]   = "STAT"; */
+// #ifdef ENABLE_DISK_LOG
+// 		char * msg_name[128];
+// 		msg_name[OPEN]   = "OPEN";
+// 		msg_name[CLOSE]  = "CLOSE";
+// 		msg_name[READ]   = "READ";
+// 		msg_name[WRITE]  = "WRITE";
+// 		msg_name[LSEEK]  = "LSEEK";
+// 		msg_name[UNLINK] = "UNLINK";
+// 		/* msg_name[FORK]   = "FORK"; */
+// 		/* msg_name[EXIT]   = "EXIT"; */
+// 		/* msg_name[STAT]   = "STAT"; */
 
-		switch (msgtype) {
-		case UNLINK:
-			dump_fd_graph("%s just finished. (pid:%d)",
-				      msg_name[msgtype], src);
-			//panic("");
-		case OPEN:
-		case CLOSE:
-		case READ:
-		case WRITE:
-		case FORK:
-		case EXIT:
-		/* case LSEEK: */
-		case STAT:
-			break;
-		case RESUME_PROC:
-			break;
-		default:
-			assert(0);
-		}
-#endif
+// 		switch (msgtype) {
+// 		case UNLINK:
+// 			dump_fd_graph("%s just finished. (pid:%d)",
+// 				      msg_name[msgtype], src);
+// 			//panic("");
+// 		case OPEN:
+// 		case CLOSE:
+// 		case READ:
+// 		case WRITE:
+// 		case FORK:
+// 		case EXIT:
+// 		/* case LSEEK: */
+// 		case STAT:
+// 			break;
+// 		case RESUME_PROC:
+// 			break;
+// 		default:
+// 			assert(0);
+// 		}
+// #endif
 
 		/* reply */
 		if (fs_msg.type != SUSPEND_PROC) {

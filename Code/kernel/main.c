@@ -1,4 +1,3 @@
-
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                             main.c
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -39,6 +38,14 @@ PUBLIC int kernel_main()
 
 	char * stk = task_stack + STACK_SIZE_TOTAL;
 
+	system_ready = 0; // 系统没有完成初始化
+	/* 在其他初始化之前 */
+	k_reenter = 1;  /* 确保在系统初始化阶段不会触发系统调用 */
+
+	log_categories = 0;  /* 默认开启进程日志 */
+	/* 初始化日志系统 */
+	log_level = 0;
+	
 	for (i = 0; i < NR_TASKS + NR_PROCS; i++,p++,t++) {
 		if (i >= NR_TASKS + NR_NATIVE_PROCS) {
 			p->p_flags = FREE_SLOT;
@@ -119,13 +126,14 @@ PUBLIC int kernel_main()
 		stk -= t->stacksize;
 	}
 
+	/* 在所有进程初始化完成后，再重置 k_reenter */
 	k_reenter = 0;
 	ticks = 0;
 
 	p_proc_ready	= proc_table;
 
 	init_clock();
-        init_keyboard();
+    init_keyboard();
 
 	restart();
 
@@ -307,11 +315,10 @@ void Init()
 	assert(fd_stdout == 1);
 
 	printf("Init() is running ...\n");
-
 	/* extract `cmd.tar' */
 	untar("/cmd.tar");
 			
-
+	printf("untar done\n");
 	char * tty_list[] = {"/dev_tty1", "/dev_tty2"};
 
 	int i;

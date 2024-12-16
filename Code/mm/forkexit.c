@@ -19,7 +19,7 @@
 #include "global.h"
 #include "keyboard.h"
 #include "proto.h"
-
+#include "syslog.h"
 
 PRIVATE void cleanup(struct proc * proc);
 
@@ -128,6 +128,10 @@ PUBLIC int do_fork()
 	m.PID = 0;
 	send_recv(SEND, child_pid, &m);
 
+    /* 在这里记录日志，此时进程已完全初始化 */
+    syslog(LOG_LEVEL_INFO, LOG_CAT_PROCESS,
+           "Process forked: %s (PID:%d)\n",
+           p->name, child_pid);
 	return 0;
 }
 
@@ -178,6 +182,11 @@ PUBLIC void do_exit(int status)
 	int pid = mm_msg.source; /* PID of caller */
 	int parent_pid = proc_table[pid].p_parent;
 	struct proc * p = &proc_table[pid];
+
+	/* 记录进程退出日志 */
+	syslog(LOG_LEVEL_INFO, LOG_CAT_PROCESS,
+		   "Process exited: %s (PID:%d, Status:%d)",
+		   p->name, pid, status);
 
 	/* tell FS, see fs_exit() */
 	MESSAGE msg2fs;

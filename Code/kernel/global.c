@@ -19,9 +19,13 @@
 #include "proc.h"
 #include "global.h"
 #include "proto.h"
-
+#include "log.h"
 
 PUBLIC	struct proc proc_table[NR_TASKS + NR_PROCS];
+
+// 添加进程切换日志的实际定义
+PUBLIC	struct proc_switch_log switch_logs[MAX_SWITCH_LOGS];
+PUBLIC	int	switch_log_index = 0;  // 初始化为0
 
 /* 注意下面的 TASK 的顺序要与 const.h 中对应 */
 PUBLIC	struct task	task_table[NR_TASKS] = {
@@ -31,7 +35,10 @@ PUBLIC	struct task	task_table[NR_TASKS] = {
 	{task_sys,      STACK_SIZE_SYS,   "SYS"       },
 	{task_hd,       STACK_SIZE_HD,    "HD"        },
 	{task_fs,       STACK_SIZE_FS,    "FS"        },
-	{task_mm,       STACK_SIZE_MM,    "MM"        }};
+	{task_mm,       STACK_SIZE_MM,    "MM"        },
+	{task_log,      STACK_SIZE_LOG,   "LOG"       },
+	{task_flush,    STACK_SIZE_SWITCH_LOG,   "FLUSH"     }
+};
 
 PUBLIC	struct task	user_proc_table[NR_NATIVE_PROCS] = {
 	/* entry    stack size     proc name */
@@ -52,8 +59,12 @@ PUBLIC	CONSOLE		console_table[NR_CONSOLES];
 
 PUBLIC	irq_handler	irq_table[NR_IRQ];
 
-PUBLIC	system_call	sys_call_table[NR_SYS_CALL] = {sys_printx,
-						       sys_sendrec};
+// 系统调用表
+PUBLIC	system_call	sys_call_table[NR_SYS_CALL] = {
+    sys_printx,
+    sys_sendrec,
+    sys_manage_log  // 添加日志管理系统调用
+};
 
 /* FS related below */
 /*****************************************************************************/
@@ -95,4 +106,10 @@ PUBLIC	char *		logbuf		= (char*)0x800000;
 PUBLIC	const int	LOGBUF_SIZE	= 0x100000;
 PUBLIC	char *		logdiskbuf	= (char*)0x900000;
 PUBLIC	const int	LOGDISKBUF_SIZE	= 0x100000;
+
+PUBLIC struct syscall_log syscall_logs[MAX_SYSCALL_LOGS];
+PUBLIC int syscall_log_index = 0;
+
+PUBLIC struct device_op_log device_logs[MAX_DEVICE_LOGS];
+PUBLIC int device_log_index = 0;
 

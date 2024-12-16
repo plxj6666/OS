@@ -17,8 +17,7 @@ CC		= gcc
 LD		= ld
 ASMBFLAGS	= -I boot/include/
 ASMKFLAGS	= -I include/ -I include/sys/ -f elf
-CFLAGS		= -I include/ -I include/sys/ -c -fno-builtin -Wall
-#CFLAGS		= -I include/ -c -fno-builtin -fno-stack-protector -fpack-struct -Wall
+CFLAGS		= -I include/ -I include/sys/ -c -fno-builtin -fno-stack-protector -fpack-struct -Wall -g
 LDFLAGS		= -Ttext $(ENTRYPOINT) -Map krnl.map
 DASMFLAGS	= -D
 ARFLAGS		= rcs
@@ -31,7 +30,7 @@ LIB		= lib/orangescrt.a
 OBJS		= kernel/kernel.o kernel/start.o kernel/main.o\
 			kernel/clock.o kernel/keyboard.o kernel/tty.o kernel/console.o\
 			kernel/i8259.o kernel/global.o kernel/protect.o kernel/proc.o\
-			kernel/systask.o kernel/hd.o\
+			kernel/systask.o kernel/hd.o kernel/log.o kernel/flush.o\
 			kernel/kliba.o kernel/klib.o\
 			lib/syslog.o\
 			mm/main.o mm/forkexit.o mm/exec.o\
@@ -84,6 +83,9 @@ boot/loader.bin : boot/loader.asm boot/include/load.inc boot/include/fat12hdr.in
 
 $(ORANGESKERNEL) : $(OBJS) $(LIB)
 	$(LD) $(LDFLAGS) -o $(ORANGESKERNEL) $^
+	cp $(ORANGESKERNEL) $(ORANGESKERNEL).debug
+	strip -s $(ORANGESKERNEL)
+	objcopy --add-gnu-debuglink=$(ORANGESKERNEL).debug $(ORANGESKERNEL)
 
 $(LIB) : $(LOBJS)
 	$(AR) $(ARFLAGS) $@ $^
@@ -206,5 +208,11 @@ fs/link.o: fs/link.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 fs/disklog.o: fs/disklog.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+kernel/log.o: kernel/log.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+kernel/flush.o: kernel/flush.c
 	$(CC) $(CFLAGS) -o $@ $<
 
