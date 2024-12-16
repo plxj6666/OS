@@ -314,19 +314,3 @@ enum msgtype {
 #define LOG_SUCCESS    0   /* 日志写入成功 */
 #define LOG_FAILED    -1   /* 日志写入失败 */
 
-/* Log Categories */
-#define LOG_CAT_ERROR     (1 << 0)  /* 错误日志 */
-#define LOG_CAT_SYSTEM    (1 << 1)  /* 系统相关日志 */
-#define LOG_CAT_PROCESS   (1 << 2)  /* 进程相关日志 */
-#define LOG_CAT_MEMORY    (1 << 3)  /* 内存相关日志 */
-#define LOG_CAT_FS        (1 << 4)  /* 文件系统日志 */
-#define LOG_CAT_DEVICE    (1 << 5)  /* 设备相关日志 */
-
-#define LOG_MESSAGE    8
-
-/* Log Return Values */
-#define LOG_SUCCESS    0   /* 日志写入成功 */
-#define LOG_FAILED    -1   /* 日志写入失败 */
-#endif /* _ORANGES_CONST_H_ */
-
-
