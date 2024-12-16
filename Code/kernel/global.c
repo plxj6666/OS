@@ -21,6 +21,11 @@
 #include "proto.h"
 #include "log.h"
 
+
+PUBLIC QUEUE queue[3]={
+{{0},0,0,0,2},
+{{0},0,0,0,5},
+{{0},0,0,0,10}};
 PUBLIC	struct proc proc_table[NR_TASKS + NR_PROCS];
 
 // 添加进程切换日志的实际定义
@@ -43,10 +48,25 @@ PUBLIC	struct task	task_table[NR_TASKS] = {
 PUBLIC	struct task	user_proc_table[NR_NATIVE_PROCS] = {
 	/* entry    stack size     proc name */
 	/* -----    ----------     --------- */
+
 	{Init,   STACK_SIZE_INIT,  "INIT" },
 	{TestA,  STACK_SIZE_TESTA, "TestA"},
 	{TestB,  STACK_SIZE_TESTB, "TestB"},
-	{TestC,  STACK_SIZE_TESTC, "TestC"}};
+	{TestC,  STACK_SIZE_TESTC, "TestC"},
+	{TestD,  STACK_SIZE_TESTD, "TestD"},
+	{TestE,  STACK_SIZE_TESTE, "TestE"}};
+
+
+
+//PUBLIC	struct task	user_proc_table[NR_NATIVE_PROCS] = {
+	/* entry    stack size     proc name */
+	/* -----    ----------     --------- */
+	//{Init,   STACK_SIZE_INIT,  "INIT" },
+	//{TestA,  STACK_SIZE_TESTA, "TestA"},
+	//{TestB,  STACK_SIZE_TESTB, "TestB"},
+	//{TestC,  STACK_SIZE_TESTC, "TestC"}};
+
+
 /* PUBLIC	struct task	user_proc_table[NR_PROCS] = { */
 /* 	{TestA, STACK_SIZE_TESTA, "TestA"}, */
 /* 	{TestB, STACK_SIZE_TESTB, "TestB"}, */
@@ -115,3 +135,11 @@ PUBLIC struct device_op_log device_logs[MAX_DEVICE_LOGS];
 PUBLIC int device_log_index = 0;
 
 unsigned int canary_enabled = false;
+// PUBLIC int Queue1_num;
+// PUBLIC int Queue2_num;
+// PUBLIC int Queue3_num;
+
+// // 队列中的进程ID数组
+// PUBLIC int Queue1[Max_process];  // 队列1，用于存储进程ID
+// PUBLIC int Queue2[Max_process];  // 队列2，用于存储进程ID
+// PUBLIC int Queue3[Max_process];  // 队列3，用于存储进程ID

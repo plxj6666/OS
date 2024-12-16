@@ -30,11 +30,19 @@
  *****************************************************************************/
 PUBLIC void clock_handler(int irq)
 {
+	
+
+
+	disp_proc();
+
 	if (++ticks >= MAX_TICKS)
 		ticks = 0;
 
 	if (p_proc_ready->ticks)
 		p_proc_ready->ticks--;
+
+	if (p_proc_ready->runtime)
+        p_proc_ready->runtime--;
 
 	if (key_pressed)
 		inform_int(TASK_TTY);
@@ -62,6 +70,10 @@ PUBLIC void clock_handler(int irq)
 		switch_log_index = (switch_log_index + 1) % MAX_SWITCH_LOGS;
 	}
 }
+
+
+
+
 
 /*****************************************************************************
  *                                milli_delay
