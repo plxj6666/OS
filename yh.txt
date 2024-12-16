@@ -1,7 +1,0 @@
-make流程：
-首先在main目录中make image
-然后进入command目录中执行make install
-然后再回答main目录bochs
-
-注意：
-每次重新make需要先删除80m.img.lock文件
