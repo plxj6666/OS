@@ -48,7 +48,7 @@
 #include "global.h"
 #include "keyboard.h"
 #include "proto.h"
-
+#include "syslog.h"
 
 #define TTY_FIRST	(tty_table)
 #define TTY_END		(tty_table + NR_CONSOLES)

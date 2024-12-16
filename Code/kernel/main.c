@@ -377,7 +377,7 @@ void Init()
 
 	printf("Init() is running ...\n");
 	/* extract `cmd.tar' */
-	//untar("/cmd.tar");
+	untar("/cmd.tar");
 			
 	printf("untar done\n");
 	char * tty_list[] = {"/dev_tty1", "/dev_tty2"};

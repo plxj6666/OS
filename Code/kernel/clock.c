@@ -31,10 +31,6 @@
 PUBLIC void clock_handler(int irq)
 {
 	
-
-
-	disp_proc();
-
 	if (++ticks >= MAX_TICKS)
 		ticks = 0;
 
@@ -52,9 +48,9 @@ PUBLIC void clock_handler(int irq)
 		return;
 	}
 	// 如果当前进程的ticks大于0，则不进行进程切换，这样导致进程调度就是按照ticks大小顺序执行
-	if (p_proc_ready->ticks > 0) {
-		return;
-	}
+	// if (p_proc_ready->ticks > 0) {
+	// 	return;
+	// }
 
 	struct proc* p_proc_current = p_proc_ready;
 	schedule();
