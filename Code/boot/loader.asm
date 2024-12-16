@@ -967,14 +967,14 @@ free_pages:              ; arg  eax,linear address , ebx  page number
 	ret 
 
 TestAllocAndFree:
-	xchg bx,bx
+	
 	mov eax,4
 	call alloc_pages
-	xchg bx,bx
+	
 	mov eax,ebx
 	mov ebx,4
 	call free_pages
-	xchg bx,bx
+	
 	ret
 
 
