@@ -34,10 +34,18 @@ struct proc {
 	u16 ldt_sel;               /* gdt selector giving ldt base and limit */
 	struct descriptor ldts[LDT_SIZE]; /* local descs for code and data */
 
-        int ticks;                 /* remained ticks */
-        int priority;
+    int ticks;                 /* remained ticks */
+    int priority;
 
-	/* u32 pid;                   /\* process id passed in from MM *\/ */
+
+	// int queue_remained_ticks;	//在该队列中剩余的时间片
+	// int waited;					//在队列中等待的时间
+
+	int runtime;
+	int inqueue;
+	int queuenum;
+
+	int pid;                   /* process id passed in from MM */
 	char name[16];		   /* name of the process */
 
 	int  p_flags;              /**
@@ -81,7 +89,7 @@ struct task {
 /* Number of tasks & processes */
 #define NR_TASKS		5
 #define NR_PROCS		32
-#define NR_NATIVE_PROCS		4
+#define NR_NATIVE_PROCS		6
 #define FIRST_PROC		proc_table[0]
 #define LAST_PROC		proc_table[NR_TASKS + NR_PROCS - 1]
 
@@ -108,6 +116,8 @@ struct task {
 #define STACK_SIZE_TESTA	STACK_SIZE_DEFAULT
 #define STACK_SIZE_TESTB	STACK_SIZE_DEFAULT
 #define STACK_SIZE_TESTC	STACK_SIZE_DEFAULT
+#define STACK_SIZE_TESTD	STACK_SIZE_DEFAULT
+#define STACK_SIZE_TESTE	STACK_SIZE_DEFAULT
 
 #define STACK_SIZE_TOTAL	(STACK_SIZE_TTY + \
 				STACK_SIZE_SYS + \
@@ -117,5 +127,15 @@ struct task {
 				STACK_SIZE_INIT + \
 				STACK_SIZE_TESTA + \
 				STACK_SIZE_TESTB + \
-				STACK_SIZE_TESTC)
+				STACK_SIZE_TESTC + \
+				STACK_SIZE_TESTD + \
+				STACK_SIZE_TESTE)
 
+#define QUEUE_LEN 50
+typedef struct s_queue {
+    struct proc* taskqueue[QUEUE_LEN];
+    int front;
+    int rear;
+    int len;
+    int timep;
+} QUEUE;

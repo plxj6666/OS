@@ -22,6 +22,11 @@ PRIVATE void unblock(struct proc* p);
 PRIVATE int  msg_send(struct proc* current, int dest, MESSAGE* m);
 PRIVATE int  msg_receive(struct proc* current, int src, MESSAGE* m);
 PRIVATE int  deadlock(int src, int dest);
+struct proc* get_one_proc();
+void outqueue(struct proc* p);
+int inqueue(struct proc* p);
+
+
 
 /*****************************************************************************
  *                                schedule
@@ -30,26 +35,217 @@ PRIVATE int  deadlock(int src, int dest);
  * <Ring 0> Choose one proc to run.
  * 
  *****************************************************************************/
+// PUBLIC void schedule()
+// {
+// 	//printl("%d\n",ticks);
+// 	//printl("%d\n",Queue1_num);
+// 	//printl("%d\n",Queue2_num);
+// 	//printl("%d\n",Queue3_num);
+
+// 	//检查队列3中的进程是否需要优先级提升
+// 	if (Queue3_num != 0) {
+// 		//遍历队列3中的所有进程，检查它们的等待时间
+// 		for (int i = 0; i< Queue3_num; i++){
+// 		int proc_id=Queue3[i];//获取队列3中的进程ID
+// 		struct proc *p=&proc_table[proc_id];//获取该进程的结构体
+
+// 			//如果进程在队列3中等待的时间超过了MAXWAITED，则提升到队列1
+// 			if (p->waited >= MAX_WAITED){
+// 			//将该进程从队列3移除
+// 			Queue3_num--;
+// 			for(int j=i;j<Queue3_num;j++){
+// 			Queue3[j]=Queue3[j + 1];//移除队列3中的该进程
+// 			}
+
+// 			//将进程加入队列1
+// 			p->queue_remained_ticks = Queue1_ticks;//重设在队列1的时间片长度
+// 			p->waited = 0;//重置进程的等待时间
+// 			Queue1[Queue1_num] = proc_id;//将进程加入队列1
+// 			Queue1_num++;//队列1进程数增加
+// 			}else//如果进程未满足提升条件，则增加它的等待时间
+// 			{
+// 				p->waited++;//增加等待时间
+// 			}	
+// 		}
+// 	}
+// 	//检查队列 1(最高优先级队列)是否非空
+// 	if(Queue1_num!=0){
+// 		int proc_id = Queue1[0];// 获取队列 1 的队首进程 ID
+// 		struct proc *p= &proc_table[proc_id];// 获取对应的进程结构体
+// 		p_proc_ready = p;// 设置当前准备好的进程为队首进程
+
+		
+// 		//减少当前队列剩余时间片
+// 		p->queue_remained_ticks--;
+
+// 		if(p->ticks <= 0){
+// 			//如果该进程的时间片已用完，退出进程
+// 			Queue1_num--;// 队列1内进程个数减-
+// 			for(int i = 0;i < Queue1_num; i++){
+// 			Queue1[i]= Queue1[i + 1];// 将队首元素从队列中移除
+// 			}
+// 		}else if(p->queue_remained_ticks <= 0){
+// 			//如果时间片用完，进程需要移动到队列 2
+// 			Queue1_num--;//队列长度减1
+// 			for(int i=0;i <Queue1_num; i++){
+// 				Queue1[i]= Queue1[i + 1];// 将队首元素从队列中移除
+// 			}
+// 			p->queue_remained_ticks = Queue2_ticks;// 将剩余时间片设置为队列 2 的时间片长度
+// 			Queue2[Queue2_num]= proc_id;//将该进程加入到队列 2
+// 			Queue2_num++;//队列 2 长度加-
+// 		}
+// 	}
+
+
+// 	//如果队列 1 为空，检查队列 2(中等优先级队列)是否非空
+// 	else if(Queue2_num!=0){
+// 		int proc_id = Queue2[0];// 获取队列 2 的队首进程 ID
+// 		struct proc *p= &proc_table[proc_id];// 获取对应的进程结构体
+// 		p_proc_ready=p;// 设置当前准备好的进程为队首进程
+
+// 		//减少当前队列剩余时间片
+// 		p->queue_remained_ticks--;
+
+// 		if(p->ticks <= 0){
+// 			//如果该进程的时间片已用完，退出进程
+// 			Queue2_num--;//队列长度减一
+// 			for(int i = 0;i < Queue2_num; i++){
+// 				Queue2[i] = Queue2[i + 1];
+// 			}
+// 		}else if(p->queue_remained_ticks <=0){
+// 			// 如果队列 2 中的时间片已耗尽，进程需要移动到队列 3
+// 			Queue2_num--;//队列长度减一
+// 			for(int i=0;i< Queue2_num; i++){
+// 				Queue2[i]= Queue2[i + 1];// 将队首元素从队列中移除
+// 			}
+// 			p->queue_remained_ticks = Queue3_ticks;// 将剩余时间片设置为队列 3 的时间片长度
+// 			Queue3[Queue3_num]=proc_id;//将该进程加入到队列 3
+// 			Queue3_num++;//队列 3 长度加一
+// 		}
+// 	}
+	
+// 	//如果队列 2 为空，检查队列 3(最低优先级队列)是否非空
+// 	else if(Queue3_num!=0){
+// 		int proc_id = Queue3[0];// 获取队列 2 的队首进程 ID
+// 		struct proc *p= &proc_table[proc_id];// 获取对应的进程结构体
+// 		p_proc_ready=p;// 设置当前准备好的进程为队首进程
+
+// 		//减少当前队列剩余时间片
+// 		p->queue_remained_ticks--;
+
+// 		if(p->ticks <= 0){
+// 			//如果该进程的时间片已用完，退出进程
+// 			Queue3_num--;//队列长度减一
+// 			for(int i = 0;i < Queue3_num; i++){
+// 				Queue3[i] = Queue3[i + 1];
+// 			}
+// 		}else if(p->queue_remained_ticks <=0){
+// 			// 如果队列 3 中的时间片已耗尽，进程需要移动到队列 2
+// 			Queue3_num--;//队列长度减一
+// 			for(int i=0;i< Queue3_num; i++){
+// 				Queue3[i]= Queue3[i + 1];// 将队首元素从队列中移除
+// 			}
+// 			p->queue_remained_ticks = Queue1_ticks;// 将剩余时间片设置为队列 1 的时间片长度
+// 			Queue3[Queue1_num]=proc_id;//将该进程加入到队列 1
+// 			Queue1_num++;//队列 1 长度加一
+// 		}
+// 	}
+
+// 	//如果所有队列都为空，则进入死循环，结束调度
+// 	else{
+// 		while(1){}//死循环
+// 	}
+// }
+
 PUBLIC void schedule()
 {
-	struct proc*	p;
-	int		greatest_ticks = 0;
+    struct proc *p, *next;
+    next = get_one_proc();
 
-	while (!greatest_ticks) {
-		for (p = &FIRST_PROC; p <= &LAST_PROC; p++) {
-			if (p->p_flags == 0) {
-				if (p->ticks > greatest_ticks) {
-					greatest_ticks = p->ticks;
-					p_proc_ready = p;
-				}
-			}
-		}
+    if (p_proc_ready->ticks && p_proc_ready->runtime &&
+        next->queuenum >= p_proc_ready->queuenum) {
+        return;
+    }
 
-		if (!greatest_ticks)
-			for (p = &FIRST_PROC; p <= &LAST_PROC; p++)
-				if (p->p_flags == 0)
-					p->ticks = p->priority;
-	}
+    if (p_proc_ready->runtime == 0) {  // 结束了
+        p_proc_ready = next;
+        outqueue(next);
+        return;
+    }
+
+    if (p_proc_ready->ticks == 0) {  // 当前时间片用完, 进队,且选下一个
+        if (p_proc_ready->queuenum < 2) {
+            p_proc_ready->queuenum += 1;  // 进到下一队列
+        }
+        p_proc_ready->ticks = (queue + p_proc_ready->queuenum)->timep;
+
+        inqueue(p_proc_ready);
+        p_proc_ready = next;
+        outqueue(next);
+        return;
+    }
+
+    if (next->queuenum < p_proc_ready->queuenum) {  // 抢占
+        inqueue(p_proc_ready);
+        p_proc_ready = next;
+        outqueue(next);
+        return;
+    }
+}
+
+void outqueue(struct proc* p) {  // 把p所在队的队首出队
+    QUEUE* tempqueue;
+    // __asm__ __volatile__("xchg %bx,%bx");
+    tempqueue = queue + p->queuenum;
+    tempqueue->front = (tempqueue->front + 1) % QUEUE_LEN;
+    p->inqueue = 0;
+    tempqueue->len -= 1;  // 队首就绪, 出队
+}
+
+int inqueue(struct proc* p) {  // 把p进队
+    QUEUE* tempqueue;
+    tempqueue = queue + p->queuenum;  // 将当前程序放到队尾
+    tempqueue->taskqueue[tempqueue->rear] = p;
+    tempqueue->rear = (tempqueue->rear + 1) % QUEUE_LEN;
+    p->inqueue = 1;
+    tempqueue->len += 1;
+}
+
+
+
+struct proc* get_one_proc() {  // 每次能拿到一个进程 , 且不可能拿不到
+    struct proc* p;
+    QUEUE* tempqueue;
+    int now_queue_num = 0;
+    for (p = &FIRST_PROC; p <= &LAST_PROC; p++) {
+        if (p->p_flags == 0 && p->inqueue == 0 &&
+            (p != p_proc_ready || queue->len == 0)) {
+            // __asm__ __volatile__("xchg %bx, %bx");makei e
+            p->ticks = queue->timep;  // 进队进行初始化
+            p->queuenum = 0;
+            p->runtime = 100;
+            inqueue(p);
+            // disp_int(p - &FIRST_PROC);
+        }
+    }
+    now_queue_num = 0;
+    while (now_queue_num <= 2) {  // 在三个队列中找能运行的程序
+        tempqueue = queue + now_queue_num;
+        int length = 0;
+        int point = tempqueue->front;
+        while (tempqueue->taskqueue[point]->p_flags != 0 &&
+               length < tempqueue->len) {
+            outqueue(tempqueue->taskqueue[point]);
+            inqueue(tempqueue->taskqueue[point]);
+            // 如果是阻塞的则先出队再入队
+            length += 1;
+            point = (point + 1) % QUEUE_LEN;
+        }
+        if (length < tempqueue->len) {  // 找到一个
+            return tempqueue->taskqueue[point];
+        }
+        now_queue_num++;
+    }
 }
 
 /*****************************************************************************
@@ -172,10 +368,13 @@ PUBLIC void reset_msg(MESSAGE* p)
  * 
  * @param p The proc to be blocked.
  *****************************************************************************/
-PRIVATE void block(struct proc* p)
-{
-	assert(p->p_flags);
-	schedule();
+PRIVATE void block(struct proc* p) {
+    assert(p->p_flags);
+    inqueue(p);
+    struct proc* next = get_one_proc();
+    p_proc_ready = next;
+    outqueue(next);
+    // disp_int(p_proc_ready - &FIRST_PROC);
 }
 
 /*****************************************************************************
@@ -365,8 +564,8 @@ PRIVATE int msg_receive(struct proc* current, int src, MESSAGE* m)
 		assert(p_who_wanna_recv->p_msg == 0);
 		assert(p_who_wanna_recv->p_sendto == NO_TASK);
 		assert(p_who_wanna_recv->has_int_msg == 0);
+
 		return 0;
-		
 	}
 
 

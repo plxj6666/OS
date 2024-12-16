@@ -40,6 +40,9 @@ PUBLIC int kernel_main()
 	char * stk = task_stack + STACK_SIZE_TOTAL;
 
 	for (i = 0; i < NR_TASKS + NR_PROCS; i++,p++,t++) {
+
+		p->pid=i;
+
 		if (i >= NR_TASKS + NR_NATIVE_PROCS) {
 			p->p_flags = FREE_SLOT;
 			continue;
@@ -119,8 +122,18 @@ PUBLIC int kernel_main()
 		stk -= t->stacksize;
 	}
 
+	// proc_table[0].ticks = proc_table[0].priority = 10;
+	// proc_table[1].ticks = proc_table[1].priority = 11;
+	// proc_table[2].ticks = proc_table[2].priority = 2;
+	// proc_table[3].ticks = proc_table[3].priority = 11;
+	// proc_table[4].ticks = proc_table[4].priority = 10;
+
 	k_reenter = 0;
 	ticks = 0;
+
+	// Queue1_num = 0;
+	// Queue2_num = 0;
+	// Queue3_num = 0;
 
 	p_proc_ready	= proc_table;
 
@@ -309,7 +322,7 @@ void Init()
 	printf("Init() is running ...\n");
 
 	/* extract `cmd.tar' */
-	untar("/cmd.tar");
+	//untar("/cmd.tar");
 			
 
 	char * tty_list[] = {"/dev_tty1", "/dev_tty2"};
@@ -345,24 +358,64 @@ void Init()
  *======================================================================*/
 void TestA()
 {
-	for(;;);
+	while (1) {
+		//disp_str("A.");
+		//printl("A");
+		//milli_delay(10);
+	}
 }
 
 /*======================================================================*
                                TestB
- *======================================================================*/
+ *==========================`============================================*/
 void TestB()
 {
-	for(;;);
+	while(1){
+		//disp_str("B.");
+		//printl("B");
+		//milli_delay(10);
+	}
 }
 
 /*======================================================================*
-                               TestB
+                               TestC
  *======================================================================*/
 void TestC()
 {
-	for(;;);
+	while(1){
+		//disp_str("C.");
+		//printl("C");
+		//milli_delay(10);
+	}
 }
+
+
+
+
+/*======================================================================*
+                               TestD
+ *======================================================================*/
+
+void TestD()
+{
+	while(1){
+		//disp_str("D.");
+		//milli_delay(10);
+	}
+}
+
+/*======================================================================*
+                               TestE
+ *======================================================================*/
+
+void TestE()
+{
+	while(1){
+		//disp_str("E.");
+		//milli_delay(10);
+	}
+}
+
 
 /*****************************************************************************
  *                                panic

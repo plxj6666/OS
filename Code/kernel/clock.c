@@ -20,6 +20,34 @@
 #include "proto.h"
 
 
+PUBLIC void disp_proc()
+{
+	int id=p_proc_ready->pid;
+	if(id==6)
+	{
+		disp_str(" <Test A> ");
+	}
+	else if(id==7)
+	{
+		disp_str(" <Test B> ");
+	}
+	else if(id==8)
+	{
+		disp_str(" <Test C> ");
+	}
+	
+	else if(id==9)
+	{
+		disp_str(" <Test D> ");
+	}
+	else if(id==10)
+	{
+		disp_str(" <Test E> ");
+	}
+
+}
+
+
 /*****************************************************************************
  *                                clock_handler
  *****************************************************************************/
@@ -31,11 +59,19 @@
  *****************************************************************************/
 PUBLIC void clock_handler(int irq)
 {
+	
+
+
+	disp_proc();
+
 	if (++ticks >= MAX_TICKS)
 		ticks = 0;
 
 	if (p_proc_ready->ticks)
 		p_proc_ready->ticks--;
+
+	if (p_proc_ready->runtime)
+        p_proc_ready->runtime--;
 
 	if (key_pressed)
 		inform_int(TASK_TTY);
@@ -51,6 +87,10 @@ PUBLIC void clock_handler(int irq)
 	schedule();
 
 }
+
+
+
+
 
 /*****************************************************************************
  *                                milli_delay
