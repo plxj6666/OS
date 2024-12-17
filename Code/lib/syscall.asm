@@ -10,8 +10,8 @@
 INT_VECTOR_SYS_CALL equ 0x90
 _NR_printx	    equ 0
 _NR_sendrec	    equ 1
-_NR_manage_log   equ     2   ; 新增日志管理系统调用号
-_NR_canary_check equ 3
+_NR_manage_log   equ     3   ; 新增日志管理系统调用号
+_NR_canary_check equ 2
 ; 导出符号
 global	printx
 global	sendrec

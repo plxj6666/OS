@@ -25,7 +25,7 @@ unsigned char payload[] = {
 };
 
 void vulnerable_function() {
-    char buffer[64]; // 声明一个64字节大小的缓冲区
+    char buffer[114514]; // 声明一个64字节大小的缓冲区
     strcpy(buffer, payload);
 }
 

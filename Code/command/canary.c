@@ -27,7 +27,7 @@ unsigned char payload[] = {
 
 void vulnerable_function() {
     unsigned int canary = 0xffffffff;
-    char buffer[64]; // 声明一个64字节大小的缓冲区
+    char buffer[114514]; // 声明一个64字节大小的缓冲区
     strcpy(buffer, payload);
     int i ;
     for (i = 0; i < 10000000; i++) {}
