@@ -12,7 +12,7 @@ CFLAGS		= -I ../include/ -I ../include/sys/ -c -fno-builtin -fno-stack-protector
 LDFLAGS		= -Ttext 0x1000
 DASMFLAGS	= -D
 LIB		= ../lib/orangescrt.a
-BIN		= echo pwd ikun touch rm ps kill help cls read edit ls mlog
+BIN		=  touch rm ps kill cls read edit ls encrypt_touch decrypt_read # attack canary # mlog ikun help echo pwd
  
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all install
@@ -121,18 +121,28 @@ ls :ls.o start.o $(LIB)
 	$(LD) $(LDFLAGS) -o $@ $?
 	$(LD) $(LDFLAGS) -o $@ $? 
 
-# attack.o: attack.c ../include/type.h ../include/stdio.h
-# 	$(CC) $(CFLAGS) -o $@ $<
+attack.o: attack.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
 
-# attack : attack.o start.o $(LIB)
-# 	$(LD) $(LDFLAGS) -o $@ $? 
+attack : attack.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $? 
 
 	
-# canary.o: canary.c ../include/type.h ../include/stdio.h
-# 	$(CC) $(CFLAGS) -o $@ $<
+canary.o: canary.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
 
-# canary : canary.o start.o $(LIB)
-# 	$(LD) $(LDFLAGS) -o $@ $? 
+canary : canary.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $? 
 
 
+encrypt_touch.o: encrypt_touch.c ../include/type.h ../include/stdio.h 
+	$(CC) $(CFLAGS) -o $@ $<
 
+encrypt_touch : encrypt_touch.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?
+
+decrypt_read.o: decrypt_read.c ../include/type.h ../include/stdio.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+decrypt_read : decrypt_read.o start.o $(LIB)
+	$(LD) $(LDFLAGS) -o $@ $?

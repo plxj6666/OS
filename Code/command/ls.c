@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
     // 遍历并打印文件名
     struct dir_entry* pde = (struct dir_entry*)buf;
     int nr_dir_entries = msg.CNT / DIR_ENTRY_SIZE;
-    
-    for (int i = 0; i < nr_dir_entries; i++, pde++) {
+    int i ;
+    for (i = 0; i < nr_dir_entries; i++, pde++) {
         if (pde->inode_nr != 0) {  // 有效的目录项
             printf("%s\n", pde->name);
         }

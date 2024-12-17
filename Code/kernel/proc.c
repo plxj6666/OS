@@ -673,15 +673,15 @@ PUBLIC int sys_manage_log(int operation, int param)
             // 禁用所有日志级别和类别
             log_level = 0;
             log_categories = 0;
-            
+            int i ;
             // 清空所有日志缓冲区
-            for (int i = 0; i < MAX_SYSCALL_LOGS; i++) {
+            for (i = 0; i < MAX_SYSCALL_LOGS; i++) {
                 syscall_logs[i].valid = 0;
             }
-            for (int i = 0; i < MAX_DEVICE_LOGS; i++) {
+            for (i = 0; i < MAX_DEVICE_LOGS; i++) {
                 device_logs[i].valid = 0;
             }
-            for (int i = 0; i < MAX_SWITCH_LOGS; i++) {
+            for (i = 0; i < MAX_SWITCH_LOGS; i++) {
                 switch_logs[i].from_pid = 0;
             }
             break;
@@ -690,7 +690,6 @@ PUBLIC int sys_manage_log(int operation, int param)
     }
     return 0;
 }
-
 
 
 /*****************************************************************************
@@ -715,12 +714,11 @@ PUBLIC void sys_canary_check() {
         unsigned int canary_address = offset_canary + base;
         unsigned int canary = *(unsigned int *)(canary_address);
 
-
+        // 检查 canary 值
         if (canary != 0xffffffff) {
-			printl("Stack overflow occurred in process\n");
-            //printl("Stack overflow occurred in process\n");
-			//printl("canary%x\n",canary);
+            printl("Stack overflow occurred in process\n");
         }
         return;
     }
 }
+

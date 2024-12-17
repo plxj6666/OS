@@ -24,8 +24,8 @@ int main(int argc, char *argv[]) {
         "--------====++*+=--------------=**+=----\n"
         "------------++*=----------------=+*+----\n"};
 
-
-    for (int i = 0; i < FRAME_COUNT; i++) {
+    int i ;
+    for (i = 0; i < FRAME_COUNT; i++) {
         if (ascii_frames[i]) {  
             printf("%s", ascii_frames[i]);
         }
