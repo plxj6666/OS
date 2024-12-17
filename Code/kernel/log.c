@@ -27,9 +27,10 @@ PUBLIC void task_log()
             int result = 0;
             
             // 使用之前保存的值进行检查
-            if (p->level <= current_level && 
+            if (p->level > current_level && 
                 (current_categories & p->category)) {
                 result = disklog(p->content);
+                printl("don't worry, i'm here hhhhhh\n");
             }
             
             // 立即回复消息

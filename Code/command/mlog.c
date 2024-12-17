@@ -15,13 +15,8 @@ void print_to_console(const char* str) {
 }
 
 void print_menu() {
-    print_to_console("\nLog Management Menu:\n");
-    print_to_console("1. Enable log level\n");
-    print_to_console("2. Disable log level\n");
-    print_to_console("3. Enable log category\n");
-    print_to_console("4. Disable log category\n");
-    print_to_console("5. Exit\n");
-    print_to_console("\nPlease enter your choice (1-5): ");
+    print_to_console("who are you?\n");
+    print_to_console("you should write this by yourself\n");
 }
 
 void print_levels() {

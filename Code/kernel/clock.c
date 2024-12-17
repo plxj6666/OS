@@ -30,11 +30,15 @@
  *****************************************************************************/
 PUBLIC void clock_handler(int irq)
 {
+	
 	if (++ticks >= MAX_TICKS)
 		ticks = 0;
 
 	if (p_proc_ready->ticks)
 		p_proc_ready->ticks--;
+
+	if (p_proc_ready->runtime)
+        p_proc_ready->runtime--;
 
 	if (key_pressed)
 		inform_int(TASK_TTY);
@@ -44,9 +48,9 @@ PUBLIC void clock_handler(int irq)
 		return;
 	}
 	// 如果当前进程的ticks大于0，则不进行进程切换，这样导致进程调度就是按照ticks大小顺序执行
-	if (p_proc_ready->ticks > 0) {
-		return;
-	}
+	// if (p_proc_ready->ticks > 0) {
+	// 	return;
+	// }
 
 	struct proc* p_proc_current = p_proc_ready;
 	schedule();
@@ -62,6 +66,10 @@ PUBLIC void clock_handler(int irq)
 		switch_log_index = (switch_log_index + 1) % MAX_SWITCH_LOGS;
 	}
 }
+
+
+
+
 
 /*****************************************************************************
  *                                milli_delay
